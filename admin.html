@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<script>
+  console.log("✅ Admin login page loaded");
+</script>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HostelFix | Admin Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; }
+    nav {
+      background: #28a745;
+      color: white;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav button {
+      background: white;
+      color: #28a745;
+      border: none;
+      padding: 6px 12px;
+      margin-left: 8px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span><b>🛠️ HostelFix — Admin Portal</b></span>
+    <div>
+      <button onclick="window.location.href='index.html'">Home</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <main style="padding: 20px;">
+    <!-- Filter Section -->
+  <div style="margin-bottom: 15px;">
+    <label><b>Filter by Visibility:</b></label>
+    <select id="filterVisibility">
+    <option value="all">All</option>
+    <option value="public">Public</option>
+    <option value="private">Private</option>
+  </select>
+</div>
+
+  <label style="margin-left:20px;"><b>Filter by Status:</b></label>
+  <select id="filterStatus">
+    <option value="all">All</option>
+    <option value="Pending">Pending</option>
+    <option value="In Progress">In Progress</option>
+    <option value="Resolved">Resolved</option>
+  </select>
+</div>
+
+
+    <h2>All Complaints</h2>
+
+    <table id="complaintsTable">
+      <thead>
+        <tr>
+          <th>Name</th><th>Room</th><th>Category</th><th>Description</th><th>Status</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="complaintsBody"></tbody>
+    </table>
+  </main>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

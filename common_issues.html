@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HostelFix | Common Issues</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+    nav {
+      background: #007BFF; color: white; padding: 12px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    nav button {
+      background: white; color: #007BFF; border: none;
+      padding: 6px 12px; margin-left: 8px; cursor: pointer; border-radius: 4px;
+    }
+    ul { list-style: none; padding: 0; }
+    li { background: #f8f9fa; margin: 8px 0; padding: 10px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span><b>🔥 HostelFix — Common Issues</b></span>
+    <div>
+      <button onclick="window.location.href='submit_complaint.html'">Submit Complaint</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <main style="padding-top: 20px;">
+    <h2>Public Complaints Feed</h2>
+    <ul id="publicIssues"></ul>
+  </main>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<main style="padding: 20px;">
+  <h2>Submit a Complaint</h2>
+
+  <label>Name:</label>
+  <input id="name" type="text" placeholder="Your name"><br><br>
+
+  <label>Room No:</label>
+  <input id="room" type="text" placeholder="Room number"><br><br>
+
+  <label>Category:</label>
+  <select id="category">
+    <option>Electrical</option>
+    <option>Plumbing</option>
+    <option>Cleaning</option>
+    <option>Other</option>
+  </select><br><br>
+
+  <label>Description:</label><br>
+  <textarea id="description" rows="4" cols="40"
+    placeholder="Describe your issue"></textarea><br><br>
+
+  <!-- 🆕 Visibility Toggle -->
+  <label>Visibility:</label><br>
+  <input type="radio" name="visibility" id="public" value="public" checked>
+  <label for="public">Public (View All)</label>
+  <input type="radio" name="visibility" id="private" value="private">
+  <label for="private">Private (Admin Only)</label><br><br>
+
+  <button onclick="submitComplaint()">Submit</button>
+  <script type="module" src="main.js"></script>
+  <h3>Your Complaints</h3>
+  <ul id="complaintList"></ul>
+</main>

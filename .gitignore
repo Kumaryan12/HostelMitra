@@ -1,0 +1,7 @@
+echo "node_modules/
+.env
+firebase-debug.log
+firebase.json
+*.log
+.vscode/
+" > .gitignore
