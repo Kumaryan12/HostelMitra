@@ -1,19 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>HostelFix | Home</title>
+  <meta charset="UTF-8" />
+  <title>HostelMitra | Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2C7BE5" />
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding-top: 100px; }
-    h1 { color: #333; }
-    button { padding: 10px 20px; margin: 20px; cursor: pointer; }
+    /* ---------------------- CSS VARIABLES ---------------------- */
+    :root{
+      --brand-student:#2C7BE5;
+      --brand-admin:#22B573;
+      --accent:#FACC15;
+      --ink:#1A202C;
+      --muted:#475569;
+      --border:#E2E8F0;
+      --bg:#F8FAFC;
+      --card:#FFFFFF;
+      --radius:14px;
+      --shadow:0 12px 30px rgba(0,0,0,.12);
+      --shadow-sm:0 8px 18px rgba(0,0,0,.10);
+    }
+
+    /* ---------------------- BASE / RESET ----------------------- */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Arial,Helvetica,sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(1100px,92%);margin-inline:auto}
+
+    /* ---------------------- ACCESSIBILITY ---------------------- */
+    .skip-link{
+      position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;
+    }
+    .skip-link:focus{
+      position:fixed;left:16px;top:16px;width:auto;height:auto;
+      background:#fff;border:2px solid var(--brand-student);padding:.5rem .75rem;
+      border-radius:10px;z-index:9999;
+    }
+    :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+    /* ---------------------- NAVBAR ----------------------------- */
+    header{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter:saturate(180%) blur(10px);
+      background:linear-gradient(0deg,rgba(255,255,255,.75),rgba(255,255,255,.9));
+      border-bottom:1px solid var(--border);
+    }
+    .nav{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:.9rem 0;
+    }
+    .brand{
+      display:flex;align-items:center;gap:.75rem;font-weight:800;font-size:1.15rem;
+      letter-spacing:.3px;
+    }
+    .brand img{
+      width:40px;height:40px;object-fit:contain;border-radius:8px;
+      background:#fff;border:1px solid var(--border);
+    }
+    .nav-links{
+      display:flex;align-items:center;gap:1rem;
+    }
+    .nav a{
+      padding:.5rem .75rem;border-radius:10px;color:#0f172a;
+    }
+    .nav a:hover{background:#EEF2FF}
+    .btn{
+      border:0;border-radius:12px;padding:.7rem 1rem;font-weight:700;cursor:pointer;
+      transition:transform .2s, box-shadow .2s, background .2s;
+      display:inline-flex;gap:.5rem;align-items:center;
+    }
+    .btn.primary{background:var(--brand-student);color:#fff;box-shadow:var(--shadow-sm)}
+    .btn.primary:hover{transform:translateY(-2px)}
+    .btn.secondary{background:var(--brand-admin);color:#fff;box-shadow:var(--shadow-sm)}
+    .btn.secondary:hover{transform:translateY(-2px)}
+    .chip{
+      background:#fff;border:1px solid var(--border);padding:.45rem .7rem;border-radius:999px;
+      font-weight:600;color:#0f172a;
+    }
+
+    /* ---------------------- HERO ------------------------------- */
+    .hero{
+  position:relative;
+  min-height:66vh; display:grid; place-items:center;
+  color:#fff; overflow:hidden;
+
+  /* image + dark overlay */
+  background:
+    linear-gradient(180deg, rgba(12,20,36,.3), rgba(12,20,36,.75)),
+    url("https://hostelmitra-81b7d.web.app/assets/nit-goa-logo.jpg") center / cover no-repeat;
+}
+    .hero::before{
+      content:"";position:absolute;inset:0;z-index:-2;
+      background-image:
+        linear-gradient(180deg, rgba(8,12,20,.62), rgba(8,12,20,.84)),
+        url("/assets/nit-goa-logo.jpg") center;
+      background-size:cover;background-position:center;
+      filter:saturate(1.05) contrast(1.05);
+      transform:scale(1.03);
+    }
+    .hero::after{
+      content:"";position:absolute;inset:-40% -20% auto -20%;z-index:-1;height:60%;
+      background:radial-gradient(ellipse at top,var(--brand-student),transparent 60%);
+      opacity:.35;filter:blur(30px);
+    }
+    .hero-inner{
+      width:min(1100px,92%);margin-inline:auto;display:grid;gap:1.2rem;justify-items:center;
+      text-align:center;padding:4.5rem 0;
+      animation:fadeIn .7s ease both;
+    }
+    .hero-logo{
+      display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(6px);
+      padding:.5rem .8rem;border-radius:999px;
+    }
+    .hero-logo img{width:34px;height:34px;border-radius:7px;border:1px solid rgba(255,255,255,.25)}
+    .hero h1{
+      font-size:clamp(2.1rem,5vw,3rem); margin:.2rem 0 .3rem; font-weight:900; letter-spacing:.4px;
+      text-shadow: 0 8px 24px rgba(0,0,0,.45), 0 2px 2px rgba(0,0,0,.25);
+    }
+    .hero p{
+      color:#E2E8F0;max-width:780px;font-size:1.05rem;line-height:1.55;margin:0 auto 1rem;
+    }
+    .cta-row{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:.4rem}
+    .statbar{
+      margin-top:1.25rem;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+    }
+    .stat{
+      background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);
+      padding:.6rem .9rem;border-radius:12px;font-weight:700;color:#fff;
+    }
+
+    /* ---------------------- SECTION WRAPPERS ------------------- */
+    section{padding:72px 0;background:var(--bg)}
+    .section-title{
+      text-align:center;margin-bottom:1.5rem;
+    }
+    .section-title h2{
+      font-size:clamp(1.6rem,3.2vw,2.1rem);margin:.2rem 0;font-weight:900;color:#0f172a;
+    }
+    .section-title p{color:var(--muted);max-width:760px;margin:.35rem auto 0}
+
+    /* ---------------------- ABOUT GRID (Section 1) -------------- */
+    .about-grid{
+      display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:center;
+    }
+    .about-card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      box-shadow:var(--shadow-sm);padding:1.35rem;
+    }
+    .about-card h3{margin-top:.25rem;font-size:1.25rem}
+    .list{
+      margin:.8rem 0 0;padding:0;list-style:none;display:grid;gap:.5rem;color:var(--muted);
+    }
+    .list li{display:flex;gap:.6rem;align-items:flex-start}
+    .list li .tick{color:var(--brand-admin);font-weight:900;margin-top:.1rem}
+    .about-visual{
+      border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);
+      box-shadow:var(--shadow);
+    }
+
+    /* ---------------------- FEATURES (Section 2) ---------------- */
+    .features-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:1rem;
+    }
+    .feature{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:var(--radius);padding:1rem;box-shadow:var(--shadow-sm);
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .feature:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+    .feature .icon{
+      width:42px;height:42px;border-radius:10px;display:grid;place-items:center;
+      background:#F1F5F9;margin-bottom:.6rem;font-size:1.2rem;
+    }
+    .feature h4{margin:.2rem 0 .4rem}
+    .badge{
+      display:inline-block;margin-top:.4rem;background:#FFF7D6;color:#7C5B00;
+      border:1px dashed #F3D079;border-radius:999px;padding:.25rem .55rem;font-weight:700;
+      font-size:.82rem;
+    }
+
+    /* ---------------------- GET STARTED (Section 3) ------------- */
+    .cards{
+      display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem;margin-top:1rem;
+    }
+    .card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      box-shadow:var(--shadow-sm);padding:1.1rem;display:grid;gap:.6rem;
+    }
+    .card h3{margin:.2rem 0}
+    .card p{color:var(--muted)}
+    .card .actions{display:flex;gap:.6rem;flex-wrap:wrap}
+
+    /* ---------------------- FAQ ------------------------------- */
+    .faq{
+      margin-top:1.5rem;display:grid;gap:.6rem;
+    }
+    details{
+      background:#ffffff;border:1px solid var(--border);border-radius:12px;padding:.7rem 1rem;
+    }
+    summary{cursor:pointer;font-weight:700}
+
+    /* ---------------------- FOOTER ---------------------------- */
+    footer{
+      border-top:1px solid var(--border);background:#F1F5F9;color:#0f172a;
+      padding:18px 0;margin-top:56px;
+    }
+    .foot{
+      display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+    }
+    .foot small{color:#334155}
+
+    /* ---------------------- ANIMATIONS ------------------------ */
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .animate{animation:fadeIn .6s ease both}
+    .delay-1{animation-delay:.08s}.delay-2{animation-delay:.16s}.delay-3{animation-delay:.24s}
+    .delay-4{animation-delay:.32s}.delay-5{animation-delay:.4s}.delay-6{animation-delay:.48s}
+
+    /* ---------------------- RESPONSIVE ------------------------ */
+    @media (max-width: 980px){
+      .about-grid{grid-template-columns:1fr}
+      .features-grid{grid-template-columns:1fr 1fr}
+      .cards{grid-template-columns:1fr}
+    }
+    @media (max-width: 640px){
+      .nav-links{display:none}
+      .hero p{font-size:1rem}
+      .features-grid{grid-template-columns:1fr}
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      *{animation:none !important;transition:none !important}
+    }
   </style>
 </head>
 <body>
-  <h1>Welcome to HostelFix</h1>
-  <p>Select your portal</p>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <button onclick="window.location.href='student_login.html'">Student Portal</button>
-  <button onclick="window.location.href='admin_login.html'">Admin Portal</button>
+  <!-- --------------------- NAVBAR --------------------- -->
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <img src="assets/nit-goa-logo.png" alt="NIT Goa logo" onerror="this.style.display='none'">
+        <span>HostelMitra</span>
+      </div>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#about" class="chip">About</a>
+        <a href="#features" class="chip">Features</a>
+        <a href="#get-started" class="chip">Get Started</a>
+      </nav>
+      <div class="nav-actions" role="group" aria-label="Quick access">
+        <button class="btn primary" onclick="location.href='student_login.html'">🎓 Student</button>
+        <button class="btn secondary" onclick="location.href='admin_login.html'">🧰 Admin</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- --------------------- HERO ----------------------- -->
+  <section class="hero" role="img" aria-label="NIT Goa hostel backdrop">
+    <div class="hero-inner">
+      <div class="hero-logo animate">
+        <img src="assets/nit-goa-logo.png" alt="NIT Goa logo" onerror="this.style.display='none'">
+        <strong>NIT Goa • Hostel Affairs</strong>
+      </div>
+      <h1 class="animate delay-1">A Smarter Way to Manage Hostel Complaints</h1>
+      <p class="animate delay-2">
+        HostelMitra connects students and wardens on a single, transparent platform.
+        Submit issues, vote on common problems, and track resolutions—<em>in real time</em>.
+      </p>
+      <div class="cta-row animate delay-3">
+        <button class="btn primary" onclick="location.href='student_login.html'">🎓 Enter Student Portal</button>
+        <button class="btn secondary" onclick="location.href='admin_login.html'">🧰 Enter Admin Portal</button>
+      </div>
+      <div class="statbar animate delay-4" aria-label="key stats">
+        <div class="stat">⚡ Realtime updates</div>
+        <div class="stat">🔒 Secure login</div>
+        <div class="stat">✅ Role-based access</div>
+      </div>
+    </div>
+  </section>
+
+  <main id="main">
+    <!-- -------------- SECTION 1: ABOUT ---------------- -->
+    <section id="about">
+      <div class="container">
+        <div class="section-title">
+          <h2>About HostelMitra</h2>
+          <p>Built for NIT Goa, HostelMitra streamlines maintenance requests and improves campus life with clarity, speed, and accountability.</p>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-card animate">
+            <h3>Why HostelMitra?</h3>
+            <ul class="list">
+              <li><span class="tick">✔</span> File complaints in seconds—<strong>no queues, no paperwork</strong>.</li>
+              <li><span class="tick">✔</span> Choose <strong>Public</strong> (visible to all) or <strong>Private</strong> (admin-only).</li>
+              <li><span class="tick">✔</span> Vote on common issues to help admins prioritize effectively.</li>
+              <li><span class="tick">✔</span> Admin has filters for <strong>Visibility</strong> and <strong>Status</strong> with real-time updates.</li>
+              <li><span class="tick">✔</span> Secure authentication with <strong>NIT Goa emails</strong> and role-based routing.</li>
+            </ul>
+          </div>
+
+          <div class="about-visual animate delay-1" aria-hidden="true">
+            <img src="assets/nit-goa-logo.png" alt="NIT Goa logo" onerror="this.style.display='none'">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- -------------- SECTION 2: FEATURES ------------- -->
+    <section id="features">
+      <div class="container">
+        <div class="section-title">
+          <h2>Powerful Features, Simple UX</h2>
+          <p>Everything you need to report, triage, and resolve issues—without friction.</p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature animate">
+            <div class="icon">🔐</div>
+            <h4>Secure Login</h4>
+            <p>Students authenticate with NIT Goa emails; admins get dedicated access.</p>
+          </div>
+
+          <div class="feature animate delay-1">
+            <div class="icon">🗳️</div>
+            <h4>Voting on Public Issues</h4>
+            <p>Students upvote common complaints so wardens can prioritize quickly.</p>
+          </div>
+
+          <div class="feature animate delay-2">
+            <div class="icon">⚡</div>
+            <h4>Real-time Firestore</h4>
+            <p>Instant updates via Firebase—no refresh required.</p>
+          </div>
+
+          <div class="feature animate delay-3">
+            <div class="icon">🕵️</div>
+            <h4>Public/Private Visibility</h4>
+            <p>Pick who can view your complaint—everyone or just the admin.</p>
+          </div>
+
+          <div class="feature animate delay-4">
+            <div class="icon">🧭</div>
+            <h4>Admin Filters</h4>
+            <p>Filter by Visibility and Status to triage and resolve efficiently.</p>
+          </div>
+
+          <div class="feature animate delay-5">
+            <div class="icon">🖼️</div>
+            <h4>Image Attachments</h4>
+            <p>Attach photos for clarity. <span class="badge">Coming Next</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- -------------- SECTION 3: GET STARTED ---------- -->
+    <section id="get-started">
+      <div class="container">
+        <div class="section-title">
+          <h2>Get Started</h2>
+          <p>Choose your portal to continue.</p>
+        </div>
+
+        <div class="cards">
+          <article class="card animate">
+            <h3>🎓 Student Portal</h3>
+            <p>Submit complaints, choose visibility (public/private), and vote for common issues to help your peers.</p>
+            <div class="actions">
+              <button class="btn primary" onclick="location.href='student_login.html'">Enter Student Portal</button>
+              <a class="chip" href="#features">See features</a>
+            </div>
+          </article>
+
+          <article class="card animate delay-1">
+            <h3> Admin Portal</h3>
+            <p>View, filter, and resolve issues in real time. Track status and maintain transparency.</p>
+            <div class="actions">
+              <button class="btn secondary" onclick="location.href='admin_login.html'">Enter Admin Portal</button>
+              <a class="chip" href="#features">See features</a>
+            </div>
+          </article>
+        </div>
+
+        <!-- Optional FAQ for richer page content -->
+        <div class="faq animate delay-2" aria-label="FAQ">
+          <details>
+            <summary>Which emails are allowed for student login?</summary>
+            <p>Student login is restricted to <strong>@nitgoa.ac.in</strong> accounts for security.</p>
+          </details>
+          <details>
+            <summary>What’s the difference between Public and Private complaints?</summary>
+            <p>Public complaints are visible to all students (and can be upvoted). Private complaints are visible only to admins.</p>
+          </details>
+          <details>
+            <summary>How soon do updates appear?</summary>
+            <p>All updates are real time via Firestore snapshots—no page refresh needed.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- --------------------- FOOTER --------------------- -->
+ <footer>
+  <div class="container foot">
+    <small>© 2025 NIT Goa • HostelMitra</small>
+    <small>Built with Firebase (Auth • Firestore)</small>
+    <small class="team">Team: Aryan Kumar • Ankur Mishra • Piyush Rohit</small>
+  </div>
+</footer>
+
+
+  <!-- No external JS required; keep logic the same -->
 </body>
 </html>

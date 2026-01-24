@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HostelMitra | Resolved Complaints</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --student:#2C7BE5; --admin:#22B573; --ink:#0f172a; --muted:#475569;
+      --bg:#F8FAFC; --card:#FFFFFF; --border:#E2E8F0;
+      --radius:14px; --shadow:0 12px 30px rgba(0,0,0,.12); --shadow-sm:0 8px 18px rgba(0,0,0,.10);
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+    .container{width:min(1100px,92%);margin-inline:auto}
+    header{position:sticky;top:0;z-index:40;backdrop-filter:saturate(180%) blur(10px);
+      background:linear-gradient(0deg,rgba(255,255,255,.82),rgba(255,255,255,.95));border-bottom:1px solid var(--border)}
+    .nav{display:flex;justify-content:space-between;align-items:center;padding:.9rem 0}
+    .brand{display:flex;gap:.6rem;align-items:center;font-weight:900;color:var(--student)}
+    .brand img{width:36px;height:36px;border-radius:8px;object-fit:contain;background:#fff;border:1px solid var(--border)}
+    .btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:.55rem .9rem;font-weight:800;cursor:pointer}
+    .btn.primary{background:var(--student);color:#fff;border-color:transparent;box-shadow:var(--shadow-sm)}
+    .hero{background:linear-gradient(135deg, rgba(44,123,229,.10), rgba(34,181,115,.09));border-bottom:1px solid var(--border)}
+    .hero-wrap{padding:26px 0;text-align:center}
+    .crumb{color:#334155;font-weight:800;background:#fff;border:1px solid var(--border);padding:.35rem .7rem;border-radius:999px;display:inline-block}
+    main{padding:22px 0 42px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    @media (max-width: 960px){.grid{grid-template-columns:1fr}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+    .card h2{margin:.2rem 0 .35rem}
+    ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+    li.item{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px;box-shadow:var(--shadow-sm)}
+    li.empty{color:#64748B;background:#fff;border:1px dashed var(--border);border-radius:12px;padding:14px;text-align:center}
+    footer{border-top:1px solid var(--border);background:#F1F5F9;color:#0f172a;padding:16px 0;margin-top:10px}
+    .foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <img src="assets/nit-goa-logo.png" alt="NIT Goa" onerror="this.style.display='none'">
+        <span>HostelMitra</span>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button class="btn" onclick="location.href='common_issues.html'">Common Issues</button>
+        <button class="btn" onclick="location.href='submit_complaint.html'">Submit Complaint</button>
+        <button class="btn" onclick="location.href='index.html'">Home</button>
+        <button class="btn primary" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-wrap">
+      <span class="crumb">Student Portal</span>
+      <h1 style="margin:.6rem 0 .35rem">Resolved Complaints</h1>
+      <p style="color:#475569;margin:0 auto;max-width:760px">
+        Browse recently <b>Resolved</b> issues. You’ll also see <b>your</b> resolved items (including private ones) below.
+      </p>
+    </div>
+  </section>
+
+  <main class="container">
+    <div class="grid">
+      <section class="card" aria-label="Public resolved complaints">
+        <h2>Public Resolved</h2>
+        <p style="color:#64748B;margin:.2rem 0 .8rem">All resolved complaints marked as public.</p>
+        <ul id="publicResolved"><li class="empty">Loading…</li></ul>
+      </section>
+
+      <section class="card" aria-label="Your resolved complaints">
+        <h2>Your Resolved</h2>
+        <p style="color:#64748B;margin:.2rem 0 .8rem">Resolved complaints filed from your account (includes private).</p>
+        <ul id="myResolved"><li class="empty">Loading…</li></ul>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container foot">
+      <small>© 2025 NIT Goa • HostelMitra</small>
+      <small>Powered by Firebase (Auth • Firestore)</small>
+    </div>
+  </footer>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

@@ -1,18 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>HostelFix | Admin Login</title>
+  <meta charset="UTF-8" />
+  <title>HostelMitra | Admin Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* THEME */
+    :root{
+      --student:#2C7BE5;
+      --admin:#22B573;
+      --accent:#FACC15;
+      --ink:#0f172a;
+      --muted:#475569;
+      --bg:#F8FAFC;
+      --card:#FFFFFF;
+      --border:#E2E8F0;
+      --radius:14px;
+      --shadow:0 12px 30px rgba(0,0,0,.12);
+      --shadow-sm:0 8px 18px rgba(0,0,0,.10);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:linear-gradient(135deg, rgba(34,181,115,.08), rgba(44,123,229,.06))}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(1100px,92%);margin-inline:auto}
+
+    /* NAVBAR */
+    header{
+      position:sticky;top:0;z-index:10;
+      backdrop-filter:saturate(180%) blur(10px);
+      background:linear-gradient(0deg,rgba(255,255,255,.88),rgba(255,255,255,.98));
+      border-bottom:1px solid var(--border);
+    }
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0}
+    .brand{display:flex;align-items:center;gap:.65rem;font-weight:900;letter-spacing:.35px;color:var(--admin)}
+    .brand img{width:36px;height:36px;border-radius:8px;object-fit:contain;background:#fff;border:1px solid var(--border)}
+    .nav-actions{display:flex;gap:.6rem;flex-wrap:wrap}
+    .btn{
+      border:0;border-radius:10px;padding:.65rem 1rem;font-weight:800;cursor:pointer;
+      transition:transform .2s,box-shadow .2s,background .2s;display:inline-flex;align-items:center;gap:.5rem
+    }
+    .btn.primary{background:var(--admin);color:#fff;box-shadow:var(--shadow-sm)}
+    .btn.primary:hover{transform:translateY(-2px)}
+    .btn.ghost{background:#fff;border:1px solid var(--border);color:#0f172a}
+    .btn.ghost:hover{background:#F1F5F9}
+
+    /* HERO */
+    .hero{border-bottom:1px solid var(--border)}
+    .hero-wrap{padding:26px 0;text-align:center}
+    .crumb{
+      color:#334155;font-weight:800;background:#fff;border:1px solid var(--border);
+      padding:.35rem .7rem;border-radius:999px;display:inline-block
+    }
+    .hero h1{margin:.6rem 0 .35rem;font-size:clamp(1.7rem,3vw,2.1rem);font-weight:900}
+    .hero p{color:var(--muted);margin:0 auto;max-width:780px}
+
+    /* LOGIN CARD */
+    main{padding:26px 0 40px}
+    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px;align-items:center}
+    @media (max-width: 900px){.grid{grid-template-columns:1fr}}
+    .card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:20px
+    }
+    .card h2{margin:.2rem 0 .6rem}
+    .hint{color:var(--muted);font-size:.95rem;margin-bottom:1rem}
+    .row{display:grid;gap:.45rem;margin:.6rem 0}
+    label{font-weight:800;font-size:.92rem}
+    input{
+      width:100%;padding:.85rem .95rem;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:1rem
+    }
+    .pw-wrap{position:relative}
+    .toggle{
+      position:absolute;right:10px;top:50%;transform:translateY(-50%);
+      font-size:.85rem;background:#fff;border:1px solid var(--border);border-radius:999px;padding:.25rem .5rem;cursor:pointer
+    }
+    .actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+    .btn.wide{min-width:180px;justify-content:center}
+
+    /* ILLUSTRATION SIDE */
+    .panel{
+      background:linear-gradient(135deg,rgba(34,181,115,.10),rgba(44,123,229,.08));
+      border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);
+      padding:20px;text-align:center
+    }
+    .panel h3{margin:.4rem 0 .4rem}
+    .panel p{color:var(--muted);margin:0 auto;max-width:540px}
+    .hostel-photo{
+      width:100%;height:220px;border-radius:12px;object-fit:cover;border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-top:12px
+    }
+
+    /* FOOTER */
+    footer{border-top:1px solid var(--border);background:#F1F5F9;color:#0f172a;padding:16px 0;margin-top:14px}
+    .foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+    .foot small{color:#334155}
+
+    @media (prefers-reduced-motion: reduce){*{transition:none !important}}
+  </style>
 </head>
 <body>
-  <h2>Admin Login</h2>
+  <!-- NAV -->
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <img src="assets/nit-goa-logo.png" alt="NIT Goa" onerror="this.style.display='none'">
+        <span>HostelMitra</span>
+      </div>
+      <div class="nav-actions">
+        <button class="btn ghost" onclick="location.href='index.html'">Home</button>
+      </div>
+    </div>
+  </header>
 
-  <input id="email" type="email" placeholder="Admin Email">
-  <input id="password" type="password" placeholder="Password">
-  <button onclick="loginAdmin()">Login</button>
-  <hr>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-wrap">
+      <span class="crumb">Admin</span>
+      <h1>Admin Login</h1>
+      <p>Sign in with your authorized admin account to manage and resolve student complaints in real time.</p>
+    </div>
+  </section>
 
+  <!-- CONTENT -->
+  <main class="container">
+    <div class="grid">
+      <!-- LOGIN CARD -->
+      <section class="card" aria-label="Admin login form">
+        <h2>Welcome back</h2>
+        <div class="hint">Use your admin credentials.</div>
 
+        <!-- Keep the same ids and onclick logic -->
+        <form onsubmit="loginAdmin(); return false;">
+          <div class="row">
+            <label for="email">Admin Email</label>
+            <input id="email" type="email" placeholder="warden@nitgoa.ac.in" autocomplete="username" />
+          </div>
+
+          <div class="row pw-wrap">
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+            <button type="button" class="toggle" onclick="const p=document.getElementById('password'); p.type = p.type==='password'?'text':'password'; this.textContent = p.type==='password'?'Show':'Hide';">Show</button>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn primary wide" onclick="loginAdmin()">Login</button>
+            <button type="button" class="btn ghost" onclick="location.href='index.html'">Back to Home</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ILLUSTRATION / INFO PANEL -->
+      <aside class="panel" aria-label="About HostelMitra Admin">
+        <h3>Manage with confidence</h3>
+        <p>Filter by visibility and status, update progress, and close issues. All actions sync instantly via Firebase.</p>
+        <!-- Replace with your hostel photo -->
+        <img class="hostel-photo" src="assets/hostel.jpg" alt="NIT Goa Hostel" onerror="this.style.display='none'">
+      </aside>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container foot">
+      <small>© 2025 NIT Goa • HostelMitra</small>
+      <small>Powered by Firebase (Auth • Firestore)</small>
+    </div>
+  </footer>
+
+  <!-- Keep your existing logic -->
   <script type="module" src="main.js"></script>
 </body>
 </html>

@@ -1,21 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>HostelFix | Student Login</title>
+  <meta charset="UTF-8" />
+  <title>HostelMitra | Student Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --student:#2C7BE5;
+      --admin:#22B573;
+      --accent:#FACC15;
+      --ink:#0f172a;
+      --muted:#475569;
+      --bg:#F8FAFC;
+      --card:#FFFFFF;
+      --border:#E2E8F0;
+      --radius:14px;
+      --shadow:0 12px 30px rgba(0,0,0,.12);
+      --shadow-sm:0 8px 18px rgba(0,0,0,.10);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+    a{color:inherit;text-decoration:none}
+    .container{width:min(1100px,92%);margin-inline:auto}
+
+    header{
+      position:sticky;top:0;z-index:30;
+      backdrop-filter:saturate(180%) blur(10px);
+      background:linear-gradient(0deg,rgba(255,255,255,.75),rgba(255,255,255,.92));
+      border-bottom:1px solid var(--border);
+    }
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0}
+    .brand{display:flex;align-items:center;gap:.65rem;font-weight:800;letter-spacing:.3px;color:var(--student)}
+    .brand img{width:40px;height:40px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid var(--border)}
+    .nav-actions{display:flex;gap:.6rem;align-items:center}
+    .btn{border:0;border-radius:10px;padding:.65rem 1rem;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s;display:inline-flex;gap:.5rem;align-items:center}
+    .btn.ghost{background:#fff;border:1px solid var(--border);color:var(--ink)}
+    .btn.ghost:hover{background:#F1F5F9}
+
+    .hero{background:linear-gradient(135deg, rgba(44,123,229,.12), rgba(34,181,115,.10));border-bottom:1px solid var(--border)}
+    .hero-wrap{display:grid;gap:1rem;justify-items:center;text-align:center;padding:56px 0 28px}
+    .crumb{color:#334155;font-weight:700;background:#fff;border:1px solid var(--border);padding:.35rem .7rem;border-radius:999px;display:inline-block}
+    .hero h1{margin:.6rem 0 .35rem;font-size:clamp(1.8rem,3.5vw,2.2rem);font-weight:900}
+    .hero p{color:var(--muted);max-width:720px;margin:0 auto 6px}
+
+    .grid{display:grid;place-items:center;padding:28px 0 56px}
+    .card{width:min(560px,92%);background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+    .card-head{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
+    .card-head img{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:#fff}
+    .card h2{margin:.2rem 0 .25rem;font-size:1.35rem}
+    .hint{color:var(--muted);font-size:.95rem;margin:.25rem 0 .8rem}
+
+    .google-btn{
+      width:100%;display:flex;justify-content:center;align-items:center;gap:.6rem;
+      background:#fff;border:1px solid var(--border);color:#111827;border-radius:12px;
+      padding:.9rem 1rem;font-weight:800;box-shadow:var(--shadow-sm);cursor:pointer;
+      transition:transform .2s, box-shadow .2s, background .2s;
+    }
+    .google-btn:hover{background:#F8FAFC;transform:translateY(-2px)}
+    .google-icon{width:20px;height:20px;display:inline-block}
+
+    .note{margin-top:.9rem;color:#475569;font-size:.92rem}
+
+    footer{border-top:1px solid var(--border);background:#F1F5F9;color:#0f172a;padding:16px 0}
+    .foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+    .foot small{color:#334155}
+
+    @media (prefers-reduced-motion: reduce){*{transition:none !important}}
+  </style>
 </head>
 <body>
-  <h2>Student Login</h2>
+  <!-- NAVBAR -->
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <img src="assets/nit-goa-logo.png" alt="NIT Goa logo" onerror="this.style.display='none'">
+        <span>HostelMitra</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn ghost" href="index.html">Home</a>
+        <a class="btn ghost" href="admin_login.html">Admin</a>
+      </div>
+    </div>
+  </header>
 
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <button onclick="loginStudent()">Login</button>
-  <button onclick="signupStudent()">Sign Up</button>
-  <hr>
-<button onclick="loginStudentWithGoogle()">Sign in with Google</button>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-wrap">
+      <span class="crumb">Student Portal</span>
+      <h1>Sign in with Google</h1>
+      <p>Use your <b>@nitgoa.ac.in</b> account to access the student dashboard, submit complaints, and upvote common issues.</p>
+    </div>
+  </section>
 
+  <!-- LOGIN CARD -->
+  <main class="container grid" id="main">
+    <section class="card" aria-label="Student Google Sign-In">
+      <div class="card-head">
+        <img src="assets/nit-goa-logo.png" alt="" onerror="this.style.display='none'">
+        <div>
+          <h2>Continue with Google</h2>
+          <div class="hint">Allowed domain: <b>@nitgoa.ac.in</b></div>
+        </div>
+      </div>
 
+      <!-- Single Google sign-in button (logic unchanged) -->
+      <button class="google-btn" onclick="loginStudentWithGoogle()">
+        <!-- Google G icon (inline SVG) -->
+        <svg class="google-icon" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M533.5 278.4c0-18.4-1.7-36.1-5-53.3H272v100.9h146.9c-6.3 34-25 62.7-53.2 82v67h85.9c50.3-46.3 81.9-114.5 81.9-196.6z" fill="#4285f4"/>
+          <path d="M272 544.3c72.9 0 134.1-24.1 178.8-65.3l-85.9-67c-23.9 16-54.5 25.4-92.9 25.4-71.3 0-131.8-48.2-153.5-112.8h-89.8v70.9c44.6 88.2 136.4 148.8 243.3 148.8z" fill="#34a853"/>
+          <path d="M118.5 324.6c-10.1-30-10.1-62.3 0-92.3v-70.9h-89.8C2.1 204.3 0 241.6 0 272.2s2.1 67.9 28.7 111.7l89.8-59.3z" fill="#fbbc04"/>
+          <path d="M272 107.7c39.6-.6 77.8 14 106.9 40.7l80.2-80.2C404.7 24.3 343.9 0 272 0 165.1 0 73.3 60.6 28.7 148.8l89.8 70.9C140.2 155.1 200.7 107.7 272 107.7z" fill="#ea4335"/>
+        </svg>
+        Sign in with Google
+      </button>
 
+      <p class="note">We’ll block non-NIT Goa emails for security. If prompted, choose your <b>@nitgoa.ac.in</b> account.</p>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container foot">
+      <small>© 2025 NIT Goa • HostelMitra</small>
+      <small>Powered by Firebase (Auth • Firestore)</small>
+    </div>
+  </footer>
+
+  <!-- Keep your JS exactly the same -->
   <script type="module" src="main.js"></script>
 </body>
 </html>
