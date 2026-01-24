@@ -309,11 +309,14 @@ window.submitComplaint = async function () {
         const node = document.createElement(container.tagName === "UL" ? "li" : "div");
         if (container.tagName !== "UL") node.className = "card"; // optional styling
 
+        
+
+
         node.innerHTML = `
           <b>${escapeHtml(c.category)}</b> — ${escapeHtml(c.description)}<br>
           <small>Status: ${escapeHtml(c.status)} • Votes: ${c.votes ?? 0} • Room: ${escapeHtml(c.room)}</small>
           <div style="margin-top:6px">
-            <button onclick="vote('${docSnap.id}')">👍 ${c.votes ?? 0}</button>
+            <button onclick="vote('${docSnap.id}')"> ${c.votes ?? 0}</button>
           </div>
         `;
         container.appendChild(node);
@@ -333,24 +336,36 @@ window.submitComplaint = async function () {
 
 
 // ---------- Admin complaint view ----------
-window.addEventListener("DOMContentLoaded", () => {
+// ---------- Admin complaint view (filters + sort + votes column) ----------
+(function () {
   const complaintsBody   = document.getElementById("complaintsBody");
   const filterVisibility = document.getElementById("filterVisibility");
   const filterStatus     = document.getElementById("filterStatus");
+  const filterSort       = document.getElementById("filterSort");
   if (!complaintsBody) return; // not on admin.html
 
-  console.log("✅ Admin dashboard initialized with visibility + status filters");
+  // Small helper so we never crash if not defined elsewhere
+  function votePill(v) {
+    const n = Number.isFinite(v) ? v : 0;
+    return `<span class="chip" style="background:#F1F5F9;border:1px solid #E2E8F0;padding:.25rem .55rem;border-radius:999px;font-weight:700"> ${n}</span>`;
+  }
+
+  console.log("✅ Admin dashboard initialized with visibility + status filters + sort");
   let unsubscribe = null;
+
+  function getMillis(t) {
+    return t?.toMillis ? t.toMillis() : (t ? new Date(t).getTime() : 0);
+  }
 
   function loadComplaints() {
     const vis  = (filterVisibility && filterVisibility.value) || "all";
-    const stat = (filterStatus && filterStatus.value) || "all";
+    const stat = (filterStatus && filterStatus.value)     || "all";
+    const sort = (filterSort && filterSort.value)         || "new";
 
     const filters = [];
     if (vis  !== "all") filters.push(where("visibility", "==", vis));
     if (stat !== "all") filters.push(where("status", "==", stat));
 
-    // Build query (no server orderBy to avoid index hassle; sort client-side)
     const base = collection(db, "complaints");
     const q = filters.length ? query(base, ...filters) : base;
 
@@ -363,24 +378,26 @@ window.addEventListener("DOMContentLoaded", () => {
 
         if (snapshot.empty) {
           complaintsBody.innerHTML =
-            `<tr><td colspan="7">No complaints found for this filter.</td></tr>`;
+            `<tr><td colspan="8">No complaints found for this filter.</td></tr>`;
           return;
         }
 
-        // Sort newest first (supports string ISO or Firestore Timestamp)
-        const rows = snapshot.docs
-          .map(d => ({ id: d.id, ...d.data() }))
-          .sort((a, b) => {
-            const ta = a.timestamp?.toMillis ? a.timestamp.toMillis()
-                     : a.timestamp ? new Date(a.timestamp).getTime() : 0;
-            const tb = b.timestamp?.toMillis ? b.timestamp.toMillis()
-                     : b.timestamp ? new Date(b.timestamp).getTime() : 0;
-            return tb - ta;
-          });
+        let rows = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        // Client-side sort (no composite index required)
+        if (sort === "vdesc") {
+          rows.sort((a,b) => (b.votes||0) - (a.votes||0) || getMillis(b.timestamp) - getMillis(a.timestamp));
+        } else if (sort === "vasc") {
+          rows.sort((a,b) => (a.votes||0) - (b.votes||0) || getMillis(b.timestamp) - getMillis(a.timestamp));
+        } else if (sort === "old") {
+          rows.sort((a,b) => getMillis(a.timestamp) - getMillis(b.timestamp));
+        } else { // "new"
+          rows.sort((a,b) => getMillis(b.timestamp) - getMillis(a.timestamp));
+        }
 
         for (const c of rows) {
-          const noteId     = `note-${c.id}`;
           const isResolved = c.status === "Resolved";
+          const noteId     = `note-${c.id}`;
 
           const noteCell = isResolved
             ? (c.adminNote
@@ -389,24 +406,18 @@ window.addEventListener("DOMContentLoaded", () => {
             : `<textarea id="${noteId}" class="note-box" rows="2" style="width:260px"
                 placeholder="Add resolution note (optional)"></textarea>`;
 
-          const actionCell = isResolved
-            ? ""
-            : `
-                <button class="btn warn"
-                        onclick="updateStatus('${c.id}','In Progress')">In&nbsp;Progress</button>
-                <button class="btn success"
-                        onclick="resolveWithNote('${c.id}')">Resolved</button>
-              `;
+          const actionCell = isResolved ? "" : `
+            <button class="btn warn"    onclick="updateStatus('${c.id}','In Progress')">In&nbsp;Progress</button>
+            <button class="btn success" onclick="resolveWithNote('${c.id}')">Resolved</button>
+          `;
 
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${escapeHtml(c.name)}</td>
             <td>${escapeHtml(c.room)}</td>
             <td>${escapeHtml(c.category)}</td>
-            <td>
-              ${escapeHtml(c.description)}
-              ${visibilityChip(c.visibility)}
-            </td>
+            <td>${escapeHtml(c.description)} ${visibilityChip(c.visibility)}</td>
+            <td>${votePill(c.votes)}</td>     <!-- Votes column -->
             <td>${statusBadge(c.status)}</td>
             <td>${noteCell}</td>
             <td style="white-space:nowrap;">${actionCell}</td>
@@ -417,7 +428,7 @@ window.addEventListener("DOMContentLoaded", () => {
       (err) => {
         console.error("admin snapshot error:", err);
         complaintsBody.innerHTML =
-          `<tr><td colspan="7">Failed to load complaints.</td></tr>`;
+          `<tr><td colspan="8">Failed to load complaints.</td></tr>`;
       }
     );
   }
@@ -425,7 +436,9 @@ window.addEventListener("DOMContentLoaded", () => {
   loadComplaints();
   if (filterVisibility) filterVisibility.addEventListener("change", loadComplaints);
   if (filterStatus)     filterStatus.addEventListener("change", loadComplaints);
-});
+  if (filterSort)       filterSort.addEventListener("change", loadComplaints);
+})();
+
 
 // ---------- Save note + resolve ----------
 /* Make sure you have serverTimestamp imported:
@@ -553,6 +566,11 @@ function escapeHtml(s){
   const el = document.createElement('div');
   el.textContent = s ?? '';
   return el.innerHTML;
+}
+function votePill(n) {
+  const v = Number(n || 0);
+  const cls = v >= 10 ? 'vote-high' : v >= 3 ? 'vote-med' : 'vote-low';
+  return `<span class="vote ${cls}"> ${v}</span>`;
 }
 function statusBadge(status){
   const cls = status === 'Resolved'   ? 'badge-resolved'

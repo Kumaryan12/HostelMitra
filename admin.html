@@ -84,6 +84,15 @@
 .btn.warn:hover{ transform:translateY(-2px); }
 .btn.success{ background:#22B573; color:#fff; }
 .btn.success:hover{ transform:translateY(-2px); }
+.vote {
+  display:inline-flex; align-items:center; gap:.35rem;
+  font-weight:800; font-size:.92rem; padding:.28rem .55rem;
+  border-radius:999px; border:1px solid #E2E8F0; background:#fff;
+}
+.vote-low  { color:#0f172a; }
+.vote-med  { color:#92400e; background:#FEF3C7; border-color:#FDE68A; }  /* 3–9 */
+.vote-high { color:#065f46; background:#D1FAE5; border-color:#A7F3D0; }  /* 10+ */
+
 
 
     /* FILTER BAR */
@@ -189,6 +198,15 @@
           </select>
         </div>
       </div>
+       <div class="filter">
+    <label for="filterSort">Sort by</label>
+    <select id="filterSort">
+      <option value="new" selected>Newest first</option>
+      <option value="old">Oldest first</option>
+      <option value="vdesc">Votes (high → low)</option>
+      <option value="vasc">Votes (low → high)</option>
+    </select>
+  </div>
 
       <div class="hint">Live data • Updates instantly</div>
     </div>
@@ -206,6 +224,7 @@
               <th>Room</th>
               <th>Category</th>
               <th>Description</th>
+              <th>Votes</th> 
               <th>Status</th>
               <th>Note</th>
               <th>Action</th>

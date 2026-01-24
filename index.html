@@ -210,6 +210,20 @@
     }
     summary{cursor:pointer;font-weight:700}
 
+    /* ---- NEW CONTACT SECTION ---- */
+    .contact-banner {
+      background: var(--gradient-support);
+      border-radius: var(--radius);
+      padding: 3rem;
+      text-align: center;
+      margin-top: 4rem;
+      border: 1px solid #DBEAFE;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-banner h3 { margin: 0 0 0.5rem; font-size: 1.75rem; font-weight: 800; color: #1E3A8A; }
+    .contact-banner p { color: #475569; max-width: 600px; margin: 0 auto 1.5rem; font-size: 1.05rem; }
+
     /* ---------------------- FOOTER ---------------------------- */
     footer{
       border-top:1px solid var(--border);background:#F1F5F9;color:#0f172a;
@@ -260,8 +274,8 @@
         <a href="#get-started" class="chip">Get Started</a>
       </nav>
       <div class="nav-actions" role="group" aria-label="Quick access">
-        <button class="btn primary" onclick="location.href='student_login.html'">🎓 Student</button>
-        <button class="btn secondary" onclick="location.href='admin_login.html'">🧰 Admin</button>
+        <button class="btn primary" onclick="location.href='student_login.html'"> Student</button>
+        <button class="btn secondary" onclick="location.href='admin_login.html'"> Admin</button>
       </div>
     </div>
   </header>
@@ -279,13 +293,13 @@
         Submit issues, vote on common problems, and track resolutions—<em>in real time</em>.
       </p>
       <div class="cta-row animate delay-3">
-        <button class="btn primary" onclick="location.href='student_login.html'">🎓 Enter Student Portal</button>
-        <button class="btn secondary" onclick="location.href='admin_login.html'">🧰 Enter Admin Portal</button>
+        <button class="btn primary" onclick="location.href='student_login.html'"> Enter Student Portal</button>
+        <button class="btn secondary" onclick="location.href='admin_login.html'"> Enter Admin Portal</button>
       </div>
       <div class="statbar animate delay-4" aria-label="key stats">
-        <div class="stat">⚡ Realtime updates</div>
-        <div class="stat">🔒 Secure login</div>
-        <div class="stat">✅ Role-based access</div>
+        <div class="stat"> Realtime updates</div>
+        <div class="stat"> Secure login</div>
+        <div class="stat"> Role-based access</div>
       </div>
     </div>
   </section>
@@ -328,37 +342,37 @@
 
         <div class="features-grid">
           <div class="feature animate">
-            <div class="icon">🔐</div>
+            
             <h4>Secure Login</h4>
             <p>Students authenticate with NIT Goa emails; admins get dedicated access.</p>
           </div>
 
           <div class="feature animate delay-1">
-            <div class="icon">🗳️</div>
+            
             <h4>Voting on Public Issues</h4>
             <p>Students upvote common complaints so wardens can prioritize quickly.</p>
           </div>
 
           <div class="feature animate delay-2">
-            <div class="icon">⚡</div>
+            
             <h4>Real-time Firestore</h4>
             <p>Instant updates via Firebase—no refresh required.</p>
           </div>
 
           <div class="feature animate delay-3">
-            <div class="icon">🕵️</div>
+            
             <h4>Public/Private Visibility</h4>
             <p>Pick who can view your complaint—everyone or just the admin.</p>
           </div>
 
           <div class="feature animate delay-4">
-            <div class="icon">🧭</div>
+            
             <h4>Admin Filters</h4>
             <p>Filter by Visibility and Status to triage and resolve efficiently.</p>
           </div>
 
           <div class="feature animate delay-5">
-            <div class="icon">🖼️</div>
+            
             <h4>Image Attachments</h4>
             <p>Attach photos for clarity. <span class="badge">Coming Next</span></p>
           </div>
@@ -409,6 +423,19 @@
             <p>All updates are real time via Firestore snapshots—no page refresh needed.</p>
           </details>
         </div>
+        <div id="contact" class="contact-banner animate delay-2">
+          <h3>Found a Glitch?</h3>
+          <p>
+            We are constantly improving HostelMitra. If you face any technical issues, login errors, 
+            or have feature suggestions, please let the development team know.
+          </p>
+          <a href="mailto:23ece1006@nitgoa.ac.in?subject=HostelMitra%20Bug%20Report" class="btn outline" style="background:white;">
+             Report an Issue
+          </a>
+        </div>
+        </div>
+    </section>
+  </main>
       </div>
     </section>
   </main>
@@ -418,7 +445,7 @@
   <div class="container foot">
     <small>© 2025 NIT Goa • HostelMitra</small>
     <small>Built with Firebase (Auth • Firestore)</small>
-    <small class="team">Team: Aryan Kumar • Ankur Mishra • Piyush Rohit</small>
+    <small class="team">Team: Aryan Kumar</small>
   </div>
 </footer>
 
