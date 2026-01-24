@@ -355,15 +355,6 @@ row.innerHTML = `
   </td>
   <td>${statusBadge(c.status)}</td>
   <td style="white-space:nowrap;">
-  <td>
-          ${
-            c.status === "Resolved" && c.adminNote
-              ? `<div style="max-width:260px"><small><b>Note:</b> ${escapeHtml(c.adminNote)}</small></div>`
-              : `<textarea id="${noteId}" rows="2" style="width:240px" placeholder="Add resolution note (optional)"></textarea>`
-          }
-        </td>
-
-        <td>
     ${
       c.status === "Resolved"
         ? "✔ Done"
@@ -423,7 +414,7 @@ window.logout = async function () {
   }
 };
 
-// ---------------- Student Google Sign-In (unchanged) ----------------
+// ---------------- Student Google Sign-In ----------------
 window.loginStudentWithGoogle = async function () {
   try {
     const result = await signInWithPopup(auth, provider);
@@ -444,76 +435,39 @@ window.loginStudentWithGoogle = async function () {
 
 
 
-// ---------------- Common Issues: public feed (active only) ----------------
+
+
 if (publicIssuesList) {
-  publicIssuesList.innerHTML = "<li class='empty'>Loading…</li>";
+  
 
-  // Require login because your rules require isSignedIn() even for public reads
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      publicIssuesList.innerHTML = "<li class='empty'>Please sign in to view complaints.</li>";
-      return;
-    }
+  const publicQuery = query(
+   collection(db, "complaints"),
+   where("visibility", "==", "public"),
+   orderBy("votes", "desc"),
+   orderBy("timestamp", "desc")
+);
 
-    // No composite index needed: equality filter only, sort client-side.
-    const publicActiveQuery = query(
-      collection(db, "complaints"),
-      where("visibility", "==", "public")
-    );
 
-    onSnapshot(publicActiveQuery, (snapshot) => {
-      // Build list in memory, excluding Resolved
-      const items = snapshot.docs
-        .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
-        .filter(c => c.status !== "Resolved") // 🚫 hide resolved from this page
-        .sort((a, b) => {
-          // sort by votes desc, then timestamp desc (client-side)
-          const v = (b.votes ?? 0) - (a.votes ?? 0);
-          if (v) return v;
-          const tb = b.timestamp?.toMillis ? b.timestamp.toMillis()
-                   : b.timestamp ? new Date(b.timestamp).getTime() : 0;
-          const ta = a.timestamp?.toMillis ? a.timestamp.toMillis()
-                   : a.timestamp ? new Date(a.timestamp).getTime() : 0;
-          return tb - ta;
-        });
 
-      publicIssuesList.innerHTML = "";
-      if (!items.length) {
-        publicIssuesList.innerHTML = "<li class='empty'>No active public complaints.</li>";
-        return;
-      }
+  onSnapshot(publicQuery, (snapshot) => {
+    publicIssuesList.innerHTML = "";
+    snapshot.forEach((docSnap) => {
+      const c = docSnap.data();
+      const id = docSnap.id;
+      const li = document.createElement("li");
 
-      for (const c of items) {
-        const tsMillis = c.timestamp?.toMillis
-          ? c.timestamp.toMillis()
-          : (c.timestamp ? new Date(c.timestamp).getTime() : 0);
-        const when = tsMillis
-          ? new Date(tsMillis).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })
-          : "";
+      li.innerHTML = `
+        <b>${c.category}</b> — ${c.description}<br>
+        <small>Status: ${c.status}</small><br>
+        <button onclick="vote('${id}')">👍 ${c.votes ?? 0}</button>
+      `;
 
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <b>${escapeHtml(c.category)}</b> — ${escapeHtml(c.description)}<br>
-          <small>
-            Room: ${escapeHtml(c.room)} •
-            ${statusBadge(c.status)} •
-            ${visibilityChip(c.visibility)}
-            ${when ? " • " + when : ""}
-          </small><br>
-          <button onclick="vote('${c.id}')">👍 ${c.votes ?? 0}</button>
-        `;
-        publicIssuesList.appendChild(li);
-      }
-    }, (err) => {
-      console.error("public feed error:", err);
-      publicIssuesList.innerHTML = "<li class='empty'>Couldn't load complaints.</li>";
+      publicIssuesList.appendChild(li);
     });
   });
 }
 
 
-
-// ---------------- One-way upvote (align with strict voting rules) ----------------
 window.vote = async function (complaintId) {
   const user = auth.currentUser;
   if (!user) {
@@ -526,27 +480,27 @@ window.vote = async function (complaintId) {
   if (!snap.exists()) return;
 
   const data = snap.data();
-  const voters = data.voters || [];
-  if (voters.includes(user.uid)) {
-    // One-way upvote: bail out if already voted (prevents rule denial)
-    alert("You’ve already supported this issue.");
-    return;
-  }
+  const hasVoted = (data.voters || []).includes(user.uid);
 
   try {
-    await updateDoc(ref, {
-      votes: increment(1),
-      voters: arrayUnion(user.uid)
-    });
+    if (hasVoted) {
+      // optional: allow un-vote
+      await updateDoc(ref, {
+        votes: increment(-1),
+        voters: arrayRemove(user.uid)
+      });
+    } else {
+      await updateDoc(ref, {
+        votes: increment(1),
+        voters: arrayUnion(user.uid)
+      });
+    }
   } catch (err) {
     console.error("Vote update failed:", err);
     alert("Vote failed: " + err.message);
   }
 };
 
-
-
-// ---------------- Helpers you already have ----------------
 function escapeHtml(s){
   const el = document.createElement('div');
   el.textContent = s ?? '';
@@ -564,7 +518,6 @@ function visibilityChip(v){
   const label = v.charAt(0).toUpperCase() + v.slice(1);
   return `<span class="chip ${cls}">${label}</span>`;
 }
-
 
 
 // ---------- Resolved page: PUBLIC resolved (rules-aligned) ----------

@@ -6,35 +6,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{
-      --student:#2C7BE5; --admin:#22B573; --ink:#0f172a; --muted:#475569;
+      --student:#2C7BE5; --admin:#22B573; --accent:#FACC15;
+      --ink:#0f172a; --muted:#475569; --subtle:#64748B;
       --bg:#F8FAFC; --card:#FFFFFF; --border:#E2E8F0;
       --radius:14px; --shadow:0 12px 30px rgba(0,0,0,.12); --shadow-sm:0 8px 18px rgba(0,0,0,.10);
     }
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+    a{color:inherit;text-decoration:none}
     .container{width:min(1100px,92%);margin-inline:auto}
+
+    /* NAVBAR */
     header{position:sticky;top:0;z-index:40;backdrop-filter:saturate(180%) blur(10px);
       background:linear-gradient(0deg,rgba(255,255,255,.82),rgba(255,255,255,.95));border-bottom:1px solid var(--border)}
     .nav{display:flex;justify-content:space-between;align-items:center;padding:.9rem 0}
-    .brand{display:flex;gap:.6rem;align-items:center;font-weight:900;color:var(--student)}
+    .brand{display:flex;gap:.6rem;align-items:center;font-weight:900;color:var(--student);letter-spacing:.2px}
     .brand img{width:36px;height:36px;border-radius:8px;object-fit:contain;background:#fff;border:1px solid var(--border)}
     .btn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:.55rem .9rem;font-weight:800;cursor:pointer}
+    .btn:hover{background:#F1F5F9}
     .btn.primary{background:var(--student);color:#fff;border-color:transparent;box-shadow:var(--shadow-sm)}
+    .btn.primary:hover{filter:brightness(.98)}
+
+    /* HERO */
     .hero{background:linear-gradient(135deg, rgba(44,123,229,.10), rgba(34,181,115,.09));border-bottom:1px solid var(--border)}
-    .hero-wrap{padding:26px 0;text-align:center}
+    .hero-wrap{padding:28px 0;text-align:center}
     .crumb{color:#334155;font-weight:800;background:#fff;border:1px solid var(--border);padding:.35rem .7rem;border-radius:999px;display:inline-block}
+    .hero h1{margin:.6rem 0 .35rem;font-size:clamp(1.6rem,3vw,2.1rem)}
+    .hero p{color:var(--muted);margin:0 auto;max-width:760px}
+
+    /* MAIN */
     main{padding:22px 0 42px}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
     @media (max-width: 960px){.grid{grid-template-columns:1fr}}
+
     .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
     .card h2{margin:.2rem 0 .35rem}
+
+    /* LISTS */
     ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
     li.item{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px;box-shadow:var(--shadow-sm)}
-    li.empty{color:#64748B;background:#fff;border:1px dashed var(--border);border-radius:12px;padding:14px;text-align:center}
+    li.empty{color:var(--subtle);background:#fff;border:1px dashed var(--border);border-radius:12px;padding:14px;text-align:center}
+    small.meta{color:var(--subtle)}
+
+    /* Badges / Chips (optional: used by helpers in main.js) */
+    .badge{display:inline-block;padding:.1rem .5rem;border-radius:999px;font-size:.75rem;font-weight:800}
+    .badge-resolved{background:#DCFCE7;color:#166534;border:1px solid #86EFAC}
+    .badge-progress{background:#FEF9C3;color:#854D0E;border:1px solid #FDE68A}
+    .badge-pending{background:#FFE4E6;color:#BE123C;border:1px solid #FDA4AF}
+    .chip{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:.15rem .5rem;font-weight:700;font-size:.75rem}
+    .chip-public{background:#F0F9FF;color:#075985;border-color:#BAE6FD}
+    .chip-private{background:#FFF7ED;color:#7C2D12;border-color:#FED7AA}
+
+    /* FOOTER */
     footer{border-top:1px solid var(--border);background:#F1F5F9;color:#0f172a;padding:16px 0;margin-top:10px}
     .foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   </style>
 </head>
 <body>
+  <!-- NAV -->
   <header>
     <div class="container nav">
       <div class="brand">
@@ -50,32 +79,39 @@
     </div>
   </header>
 
+  <!-- HERO -->
   <section class="hero">
     <div class="container hero-wrap">
       <span class="crumb">Student Portal</span>
-      <h1 style="margin:.6rem 0 .35rem">Resolved Complaints</h1>
-      <p style="color:#475569;margin:0 auto;max-width:760px">
-        Browse recently <b>Resolved</b> issues. You’ll also see <b>your</b> resolved items (including private ones) below.
-      </p>
+      <h1>Resolved Complaints</h1>
+      <p>Browse recently <b>Resolved</b> issues. You’ll also see <b>your</b> resolved items (including private ones) below.</p>
     </div>
   </section>
 
+  <!-- CONTENT -->
   <main class="container">
     <div class="grid">
+      <!-- Public Resolved -->
       <section class="card" aria-label="Public resolved complaints">
         <h2>Public Resolved</h2>
-        <p style="color:#64748B;margin:.2rem 0 .8rem">All resolved complaints marked as public.</p>
-        <ul id="publicResolved"><li class="empty">Loading…</li></ul>
+        <p class="meta" style="margin:.2rem 0 .8rem">All resolved complaints marked as public.</p>
+        <ul id="publicResolved" aria-live="polite">
+          <li class="empty">Loading…</li>
+        </ul>
       </section>
 
+      <!-- My Resolved -->
       <section class="card" aria-label="Your resolved complaints">
         <h2>Your Resolved</h2>
-        <p style="color:#64748B;margin:.2rem 0 .8rem">Resolved complaints filed from your account (includes private).</p>
-        <ul id="myResolved"><li class="empty">Loading…</li></ul>
+        <p class="meta" style="margin:.2rem 0 .8rem">Resolved complaints filed from your account (includes private).</p>
+        <ul id="myResolved" aria-live="polite">
+          <li class="empty">Loading…</li>
+        </ul>
       </section>
     </div>
   </main>
 
+  <!-- FOOTER -->
   <footer>
     <div class="container foot">
       <small>© 2025 NIT Goa • HostelMitra</small>
@@ -83,6 +119,7 @@
     </div>
   </footer>
 
+  <!-- Logic lives in main.js -->
   <script type="module" src="main.js"></script>
 </body>
 </html>
