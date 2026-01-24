@@ -305,79 +305,127 @@ if (publicIssuesList) {
 
 // ---------- Admin complaint view ----------
 window.addEventListener("DOMContentLoaded", () => {
-  const complaintsBody = document.getElementById("complaintsBody");
+  const complaintsBody   = document.getElementById("complaintsBody");
   const filterVisibility = document.getElementById("filterVisibility");
-  const filterStatus = document.getElementById("filterStatus");
-  if (!complaintsBody) return;
+  const filterStatus     = document.getElementById("filterStatus");
+  if (!complaintsBody) return; // not on admin.html
 
   console.log("✅ Admin dashboard initialized with visibility + status filters");
-
   let unsubscribe = null;
 
   function loadComplaints() {
-    const visibility = filterVisibility.value;
-    const status = filterStatus.value;
+    const vis  = (filterVisibility && filterVisibility.value) || "all";
+    const stat = (filterStatus && filterStatus.value) || "all";
+
     const filters = [];
+    if (vis  !== "all") filters.push(where("visibility", "==", vis));
+    if (stat !== "all") filters.push(where("status", "==", stat));
 
-    // apply filters conditionally
-    if (visibility !== "all") filters.push(where("visibility", "==", visibility));
-    if (status !== "all") filters.push(where("status", "==", status));
+    // Build query (no server orderBy to avoid index hassle; sort client-side)
+    const base = collection(db, "complaints");
+    const q = filters.length ? query(base, ...filters) : base;
 
-    let q;
-    if (filters.length > 0) {
-      q = query(collection(db, "complaints"), ...filters, orderBy("timestamp", "desc"));
-    } else {
-      q = query(collection(db, "complaints"), orderBy("timestamp", "desc"));
-    }
-
-    // clean up old listener
     if (unsubscribe) unsubscribe();
 
-    unsubscribe = onSnapshot(q, (snapshot) => {
-      complaintsBody.innerHTML = "";
-      if (snapshot.empty) {
+    unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        complaintsBody.innerHTML = "";
+
+        if (snapshot.empty) {
+          complaintsBody.innerHTML =
+            `<tr><td colspan="7">No complaints found for this filter.</td></tr>`;
+          return;
+        }
+
+        // Sort newest first (supports string ISO or Firestore Timestamp)
+        const rows = snapshot.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => {
+            const ta = a.timestamp?.toMillis ? a.timestamp.toMillis()
+                     : a.timestamp ? new Date(a.timestamp).getTime() : 0;
+            const tb = b.timestamp?.toMillis ? b.timestamp.toMillis()
+                     : b.timestamp ? new Date(b.timestamp).getTime() : 0;
+            return tb - ta;
+          });
+
+        for (const c of rows) {
+          const noteId     = `note-${c.id}`;
+          const isResolved = c.status === "Resolved";
+
+          const noteCell = isResolved
+            ? (c.adminNote
+                ? `<div style="max-width:260px"><small><b>Note:</b> ${escapeHtml(c.adminNote)}</small></div>`
+                : `<small>—</small>`)
+            : `<textarea id="${noteId}" class="note-box" rows="2" style="width:260px"
+                placeholder="Add resolution note (optional)"></textarea>`;
+
+          const actionCell = isResolved
+            ? ""
+            : `
+                <button class="btn warn"
+                        onclick="updateStatus('${c.id}','In Progress')">In&nbsp;Progress</button>
+                <button class="btn success"
+                        onclick="resolveWithNote('${c.id}')">Resolved</button>
+              `;
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${escapeHtml(c.name)}</td>
+            <td>${escapeHtml(c.room)}</td>
+            <td>${escapeHtml(c.category)}</td>
+            <td>
+              ${escapeHtml(c.description)}
+              ${visibilityChip(c.visibility)}
+            </td>
+            <td>${statusBadge(c.status)}</td>
+            <td>${noteCell}</td>
+            <td style="white-space:nowrap;">${actionCell}</td>
+          `;
+          complaintsBody.appendChild(tr);
+        }
+      },
+      (err) => {
+        console.error("admin snapshot error:", err);
         complaintsBody.innerHTML =
-          `<tr><td colspan="6">No complaints found for this filter.</td></tr>`;
-        return;
+          `<tr><td colspan="7">Failed to load complaints.</td></tr>`;
       }
-
-      snapshot.forEach((docSnap) => {
-        // existing inside: snapshot.forEach((docSnap) => { ... })
-const c = docSnap.data();
-const row = document.createElement("tr");
-row.innerHTML = `
-  <td>${escapeHtml(c.name)}</td>
-  <td>${escapeHtml(c.room)}</td>
-  <td>${escapeHtml(c.category)}</td>
-  <td>
-    ${escapeHtml(c.description)}
-    ${visibilityChip(c.visibility)}
-  </td>
-  <td>${statusBadge(c.status)}</td>
-  <td style="white-space:nowrap;">
-    ${
-      c.status === "Resolved"
-        ? "✔ Done"
-        : `
-          <button class="btn warn" onclick="updateStatus('${docSnap.id}','In Progress')">In&nbsp;Progress</button>
-          <button class="btn success" onclick="updateStatus('${docSnap.id}','Resolved')">Resolved</button>
-        `
-    }
-  </td>
-`;
-complaintsBody.appendChild(row);
-
-      });
-    });
+    );
   }
 
-  // initial load
   loadComplaints();
-
-  // reload when any filter changes
-  filterVisibility.addEventListener("change", loadComplaints);
-  filterStatus.addEventListener("change", loadComplaints);
+  if (filterVisibility) filterVisibility.addEventListener("change", loadComplaints);
+  if (filterStatus)     filterStatus.addEventListener("change", loadComplaints);
 });
+
+// ---------- Save note + resolve ----------
+/* Make sure you have serverTimestamp imported:
+   import { serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+*/
+window.resolveWithNote = async function (id) {
+  try {
+    const user = auth.currentUser;
+    if (!user) { alert("Please sign in again."); return; }
+
+    const noteEl = document.getElementById(`note-${id}`);
+    const adminNote = noteEl ? noteEl.value.trim() : "";
+
+    const ref = doc(db, "complaints", id);
+    await updateDoc(ref, {
+      status: "Resolved",
+      adminNote: adminNote || null,
+      resolvedBy: user.email || null,
+      resolvedByUid: user.uid || null,
+      resolvedAt: serverTimestamp()
+    });
+
+    if (noteEl) noteEl.value = "";
+  } catch (err) {
+    console.error(err);
+    alert("Update failed: " + err.message);
+  }
+};
+
 
 // ---------------- Student Auth ----------------
 window.signupStudent = async function () {
@@ -577,54 +625,66 @@ if (publicResolvedEl) {
   });
 }
 
-// ---------- Resolved page: YOUR resolved ----------
-const myResolvedEl = document.getElementById("myResolved");
-if (myResolvedEl) {
-  myResolvedEl.innerHTML = "<li class='empty'>Loading…</li>";
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      myResolvedEl.innerHTML = "<li class='empty'>Sign in to see your resolved items.</li>";
-      return;
-    }
-
-    // Aligns with rules (owner read)
-    const qMine = query(collection(db, "complaints"), where("uid", "==", user.uid));
-
-    onSnapshot(qMine, (snap) => {
-      const items = snap.docs
-        .map(d => d.data())
-        .filter(c => c.status === "Resolved")
-        .sort((a, b) => {
-          const ta = a.timestamp?.toMillis ? a.timestamp.toMillis() :
-                     a.timestamp ? new Date(a.timestamp).getTime() : 0;
-          const tb = b.timestamp?.toMillis ? b.timestamp.toMillis() :
-                     b.timestamp ? new Date(b.timestamp).getTime() : 0;
-          return tb - ta;
-        });
-
-      if (!items.length) {
-        myResolvedEl.innerHTML = "<li class='empty'>No resolved items yet.</li>";
-        return;
-      }
-
-      myResolvedEl.innerHTML = "";
-      for (const c of items) {
-        const ts = c.timestamp?.toDate ? c.timestamp.toDate()
-                 : c.timestamp ? new Date(c.timestamp) : null;
-        const when = ts ? ts.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "";
-        const li = document.createElement("li");
-        li.className = "item";
-        li.innerHTML = `
-          <b>${c.category}</b> — ${c.description}<br>
-          <small>Room ${c.room} • Resolved ${when ? "• " + when : ""} • Visibility: ${c.visibility}</small>
-        `;
-        myResolvedEl.appendChild(li);
-      }
-    }, (err) => {
-      console.error("myResolved error:", err);
-      myResolvedEl.innerHTML = "<li class='empty'>Couldn't load your resolved items.</li>";
-    });
-  });
+// ---------- Resolved lists (public + mine) ----------
+function formatTime(t) {
+  try {
+    const d = t?.toDate ? t.toDate() : (typeof t === "string" ? new Date(t) : null);
+    return d ? d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "";
+  } catch { return ""; }
 }
 
+function renderResolvedItem(c) {
+  const li = document.createElement("li");
+  li.className = "item";
+  li.innerHTML = `
+    <div><b>${escapeHtml(c.category)}</b> — ${escapeHtml(c.description)}</div>
+    <div class="meta">
+      Room ${escapeHtml(c.room)} • Resolved • ${formatTime(c.resolvedAt || c.timestamp)}
+      ${c.visibility ? ` • Visibility: ${escapeHtml(c.visibility)}` : ""}
+    </div>
+    ${c.adminNote ? `<div class="note">📝 ${escapeHtml(c.adminNote)}</div>` : ""}
+  `;
+  return li;
+}
+
+
+if (publicResolvedEl) {
+  const q = query(
+    collection(db, "complaints"),
+    where("visibility", "==", "public"),
+    where("status", "==", "Resolved"),
+    orderBy("timestamp", "desc") // client sort is fine too; keep if index exists
+  );
+  onSnapshot(q, (snap) => {
+    publicResolvedEl.innerHTML = "";
+    if (snap.empty) {
+      publicResolvedEl.innerHTML = `<li class="empty">No resolved public items yet.</li>`;
+      return;
+    }
+    snap.forEach(docSnap => publicResolvedEl.appendChild(renderResolvedItem(docSnap.data())));
+  }, (e) => console.error("publicResolved error:", e));
+}
+
+const myResolvedEl = document.getElementById("myResolved");
+if (myResolvedEl) {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      myResolvedEl.innerHTML = `<li class="empty">Please sign in to see your resolved items.</li>`;
+      return;
+    }
+    const q = query(
+      collection(db, "complaints"),
+      where("uid", "==", user.uid),
+      where("status", "==", "Resolved"),
+      orderBy("timestamp", "desc")
+    );
+    onSnapshot(q, (snap) => {
+      myResolvedEl.innerHTML = "";
+      if (snap.empty) {
+        myResolvedEl.innerHTML = `<li class="empty">No resolved complaints yet.</li>`;
+        return;
+      }
+      snap.forEach(docSnap => myResolvedEl.appendChild(renderResolvedItem(docSnap.data())));
+    }, (e) => console.error("myResolved error:", e));
+  });
+}
