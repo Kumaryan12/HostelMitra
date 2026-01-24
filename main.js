@@ -246,57 +246,86 @@ window.submitComplaint = async function () {
 
 
 
-if (publicIssuesList) {
-  console.log(" Public issues listener initialized");
+// ---------- PUBLIC FEED (Common Issues) ----------
+(() => {
+  // Support either a <ul id="publicIssues"> or a grid container like <div id="publicGrid">
+  const container =
+    document.getElementById("publicIssues") ||
+    document.getElementById("publicGrid") ||
+    document.querySelector("[data-public-feed]");
 
-  // Same query as before (no new indexes needed)
-  const publicQuery = query(
+  if (!container) return;
+
+  // Kill any previous listener to avoid duplicates from old code
+  if (window.__publicUnsub) {
+    try { window.__publicUnsub(); } catch {}
+    window.__publicUnsub = null;
+  }
+
+  // Helper to clear & render a small "empty" state
+  const renderEmpty = (msg) => {
+    container.innerHTML = "";
+    const el = document.createElement(container.tagName === "UL" ? "li" : "div");
+    el.className = "empty";
+    el.textContent = msg;
+    container.appendChild(el);
+  };
+
+  const ACTIVE_STATES = ["Pending", "In Progress"];
+
+  // Prefer true server-side filtering (requires composite index):
+  // visibility == 'public' AND status IN ['Pending','In Progress'] ORDER BY votes desc, timestamp desc
+  const q = query(
     collection(db, "complaints"),
     where("visibility", "==", "public"),
+    where("status", "in", ACTIVE_STATES),
     orderBy("votes", "desc"),
     orderBy("timestamp", "desc")
   );
 
-  onSnapshot(
-    publicQuery,
+  window.__publicUnsub = onSnapshot(
+    q,
     (snapshot) => {
-      console.log("📥 Snapshot triggered:", snapshot.size, "docs");
-      publicIssuesList.innerHTML = "";
+      container.innerHTML = "";
 
-      let rendered = 0;
+      if (snapshot.empty) {
+        renderEmpty("No active public complaints.");
+        return;
+      }
 
       snapshot.forEach((docSnap) => {
         const c = docSnap.data();
 
-        // ⛳ Hide resolved from the public feed (but still read)
-        if (c.status === "Resolved") return;
+        // Extra guard in case a weird doc slips through (trailing spaces etc.)
+        const st = (c.status || "").trim().toLowerCase();
+        if (st === "resolved") {
+          console.warn("Resolved slipped through filter:", docSnap.id, c.status);
+          return;
+        }
 
-        const id = docSnap.id;
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <b>${c.category}</b> — ${c.description}<br>
-          <small>
-            Room: ${c.room} • Status: ${c.status} • Votes: ${c.votes ?? 0}
-          </small>
-          <div style="margin-top:6px;">
-            <button onclick="vote('${id}')">👍 ${c.votes ?? 0}</button>
+        console.log("[public] render", docSnap.id, c.status, c.visibility);
+
+        // Render as card or list item depending on container
+        const node = document.createElement(container.tagName === "UL" ? "li" : "div");
+        if (container.tagName !== "UL") node.className = "card"; // optional styling
+
+        node.innerHTML = `
+          <b>${escapeHtml(c.category)}</b> — ${escapeHtml(c.description)}<br>
+          <small>Status: ${escapeHtml(c.status)} • Votes: ${c.votes ?? 0} • Room: ${escapeHtml(c.room)}</small>
+          <div style="margin-top:6px">
+            <button onclick="vote('${docSnap.id}')">👍 ${c.votes ?? 0}</button>
           </div>
         `;
-        publicIssuesList.appendChild(li);
-        rendered++;
+        container.appendChild(node);
       });
-
-      // If snapshot had docs but all were filtered, show a friendly empty state
-      if (rendered === 0) {
-        publicIssuesList.innerHTML = "<li>No active public complaints.</li>";
-      }
     },
-    (error) => {
-      console.error(" Snapshot error:", error);
-      publicIssuesList.innerHTML = "<li>Failed to load complaints.</li>";
+    (err) => {
+      console.error("Public feed error:", err);
+      renderEmpty("Unable to load feed.");
     }
   );
-}
+})();
+
 
 
 
@@ -485,35 +514,6 @@ window.loginStudentWithGoogle = async function () {
 
 
 
-if (publicIssuesList) {
-  
-
-  const publicQuery = query(
-   collection(db, "complaints"),
-   where("visibility", "==", "public"),
-   orderBy("votes", "desc"),
-   orderBy("timestamp", "desc")
-);
-
-
-
-  onSnapshot(publicQuery, (snapshot) => {
-    publicIssuesList.innerHTML = "";
-    snapshot.forEach((docSnap) => {
-      const c = docSnap.data();
-      const id = docSnap.id;
-      const li = document.createElement("li");
-
-      li.innerHTML = `
-        <b>${c.category}</b> — ${c.description}<br>
-        <small>Status: ${c.status}</small><br>
-        <button onclick="vote('${id}')">👍 ${c.votes ?? 0}</button>
-      `;
-
-      publicIssuesList.appendChild(li);
-    });
-  });
-}
 
 
 window.vote = async function (complaintId) {
@@ -648,22 +648,7 @@ function renderResolvedItem(c) {
 }
 
 
-if (publicResolvedEl) {
-  const q = query(
-    collection(db, "complaints"),
-    where("visibility", "==", "public"),
-    where("status", "==", "Resolved"),
-    orderBy("timestamp", "desc") // client sort is fine too; keep if index exists
-  );
-  onSnapshot(q, (snap) => {
-    publicResolvedEl.innerHTML = "";
-    if (snap.empty) {
-      publicResolvedEl.innerHTML = `<li class="empty">No resolved public items yet.</li>`;
-      return;
-    }
-    snap.forEach(docSnap => publicResolvedEl.appendChild(renderResolvedItem(docSnap.data())));
-  }, (e) => console.error("publicResolved error:", e));
-}
+
 
 const myResolvedEl = document.getElementById("myResolved");
 if (myResolvedEl) {
