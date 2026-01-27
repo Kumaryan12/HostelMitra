@@ -4,109 +4,228 @@
   <meta charset="UTF-8" />
   <title>HostelMitra | Student Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f172a" />
   <style>
-    :root{
-      --student:#2C7BE5;
-      --admin:#22B573;
-      --accent:#FACC15;
-      --ink:#0f172a;
-      --muted:#475569;
-      --bg:#F8FAFC;
-      --card:#FFFFFF;
-      --border:#E2E8F0;
-      --radius:14px;
-      --shadow:0 12px 30px rgba(0,0,0,.12);
-      --shadow-sm:0 8px 18px rgba(0,0,0,.10);
+    /* ---------------------- VARIABLES ---------------------- */
+    :root {
+      --primary: #3B82F6;
+      --text-main: #FFFFFF;
+      --text-muted: #94A3B8;
+      
+      /* Glassmorphism Variables */
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-blur: blur(20px);
+      --radius: 20px;
+      
+      --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+      --bg-image: url('https://hostelmitra-81b7d.web.app/assets/nit-goa-logo.jpg');
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
-    a{color:inherit;text-decoration:none}
-    .container{width:min(1100px,92%);margin-inline:auto}
 
-    header{
-      position:sticky;top:0;z-index:30;
-      backdrop-filter:saturate(180%) blur(10px);
-      background:linear-gradient(0deg,rgba(255,255,255,.75),rgba(255,255,255,.92));
-      border-bottom:1px solid var(--border);
+    /* ---------------------- RESET -------------------------- */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: var(--font-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      
+      /* Dark Background + Image Overlay */
+      background: 
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)),
+        var(--bg-image);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
     }
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0}
-    .brand{display:flex;align-items:center;gap:.65rem;font-weight:800;letter-spacing:.3px;color:var(--student)}
-    .brand img{width:40px;height:40px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid var(--border)}
-    .nav-actions{display:flex;gap:.6rem;align-items:center}
-    .btn{border:0;border-radius:10px;padding:.65rem 1rem;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s;display:inline-flex;gap:.5rem;align-items:center}
-    .btn.ghost{background:#fff;border:1px solid var(--border);color:var(--ink)}
-    .btn.ghost:hover{background:#F1F5F9}
 
-    .hero{background:linear-gradient(135deg, rgba(44,123,229,.12), rgba(34,181,115,.10));border-bottom:1px solid var(--border)}
-    .hero-wrap{display:grid;gap:1rem;justify-items:center;text-align:center;padding:56px 0 28px}
-    .crumb{color:#334155;font-weight:700;background:#fff;border:1px solid var(--border);padding:.35rem .7rem;border-radius:999px;display:inline-block}
-    .hero h1{margin:.6rem 0 .35rem;font-size:clamp(1.8rem,3.5vw,2.2rem);font-weight:900}
-    .hero p{color:var(--muted);max-width:720px;margin:0 auto 6px}
+    a { text-decoration: none; color: inherit; transition: color 0.2s; }
 
-    .grid{display:grid;place-items:center;padding:28px 0 56px}
-    .card{width:min(560px,92%);background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
-    .card-head{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
-    .card-head img{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:#fff}
-    .card h2{margin:.2rem 0 .25rem;font-size:1.35rem}
-    .hint{color:var(--muted);font-size:.95rem;margin:.25rem 0 .8rem}
-
-    .google-btn{
-      width:100%;display:flex;justify-content:center;align-items:center;gap:.6rem;
-      background:#fff;border:1px solid var(--border);color:#111827;border-radius:12px;
-      padding:.9rem 1rem;font-weight:800;box-shadow:var(--shadow-sm);cursor:pointer;
-      transition:transform .2s, box-shadow .2s, background .2s;
+    .container {
+      width: min(1000px, 90%);
+      margin-inline: auto;
     }
-    .google-btn:hover{background:#F8FAFC;transform:translateY(-2px)}
-    .google-icon{width:20px;height:20px;display:inline-block}
 
-    .note{margin-top:.9rem;color:#475569;font-size:.92rem}
+    /* ---------------------- HEADER ------------------------- */
+    header {
+      padding: 1.5rem 0;
+      position: absolute;
+      width: 100%;
+      top: 0;
+      z-index: 10;
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .brand img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+    }
+    
+    .nav-actions { display: flex; gap: 1rem; }
+    
+    .nav-link {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .nav-link:hover {
+      color: #fff;
+      background: var(--glass-bg);
+    }
 
-    footer{border-top:1px solid var(--border);background:#F1F5F9;color:#0f172a;padding:16px 0}
-    .foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-    .foot small{color:#334155}
+    /* ---------------------- MAIN (LOGIN) ------------------- */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      margin-top: 60px; /* Offset for header */
+    }
 
-    @media (prefers-reduced-motion: reduce){*{transition:none !important}}
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      
+      /* Glass Style */
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      
+      padding: 3rem 2rem;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .card-icon {
+      width: 60px;
+      height: 60px;
+      background: rgba(59, 130, 246, 0.15); /* Blue tint */
+      color: #60A5FA;
+      font-size: 1.8rem;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 1.5rem;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ---------------------- GOOGLE BTN --------------------- */
+    .google-btn {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      
+      /* White button for contrast against dark glass */
+      background: #FFFFFF; 
+      color: #1e293b;
+      
+      border: none;
+      border-radius: 12px;
+      padding: 1rem;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .google-btn:hover {
+      background: #F1F5F9;
+      transform: translateY(-2px);
+    }
+    
+    .google-btn:active {
+      transform: scale(0.98);
+    }
+
+    .google-icon { width: 22px; height: 22px; }
+
+    .domain-hint {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      border: 1px dashed var(--glass-border);
+    }
+    .domain-hint b { color: #fff; }
+
+    /* ---------------------- FOOTER ------------------------- */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
-  <!-- NAVBAR -->
+
   <header>
     <div class="container nav">
       <div class="brand">
-        <img src="assets/nit-goa-logo.png" alt="NIT Goa logo" onerror="this.style.display='none'">
+        <img src="assets/nit-goa-logo.png" alt="Logo" onerror="this.style.display='none'">
         <span>HostelMitra</span>
       </div>
       <div class="nav-actions">
-        <a class="btn ghost" href="index.html">Home</a>
-        <a class="btn ghost" href="admin_login.html">Admin</a>
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link" href="admin_login.html">Admin</a>
       </div>
     </div>
   </header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="container hero-wrap">
-      <span class="crumb">Student Portal</span>
-      <h1>Sign in with Google</h1>
-      <p>Use your <b>@nitgoa.ac.in</b> account to access the student dashboard, submit complaints, and upvote common issues.</p>
-    </div>
-  </section>
+  <main>
+    <div class="login-card">
+      <div class="card-icon">🎓</div>
+      
+      <h1>Student Portal</h1>
+      <p class="subtitle">
+        Sign in to submit complaints, vote on issues, and track maintenance requests.
+      </p>
 
-  <!-- LOGIN CARD -->
-  <main class="container grid" id="main">
-    <section class="card" aria-label="Student Google Sign-In">
-      <div class="card-head">
-        <img src="assets/nit-goa-logo.png" alt="" onerror="this.style.display='none'">
-        <div>
-          <h2>Continue with Google</h2>
-          <div class="hint">Allowed domain: <b>@nitgoa.ac.in</b></div>
-        </div>
-      </div>
-
-      <!-- Single Google sign-in button (logic unchanged) -->
       <button class="google-btn" onclick="loginStudentWithGoogle()">
-        <!-- Google G icon (inline SVG) -->
-        <svg class="google-icon" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="google-icon" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg">
           <path d="M533.5 278.4c0-18.4-1.7-36.1-5-53.3H272v100.9h146.9c-6.3 34-25 62.7-53.2 82v67h85.9c50.3-46.3 81.9-114.5 81.9-196.6z" fill="#4285f4"/>
           <path d="M272 544.3c72.9 0 134.1-24.1 178.8-65.3l-85.9-67c-23.9 16-54.5 25.4-92.9 25.4-71.3 0-131.8-48.2-153.5-112.8h-89.8v70.9c44.6 88.2 136.4 148.8 243.3 148.8z" fill="#34a853"/>
           <path d="M118.5 324.6c-10.1-30-10.1-62.3 0-92.3v-70.9h-89.8C2.1 204.3 0 241.6 0 272.2s2.1 67.9 28.7 111.7l89.8-59.3z" fill="#fbbc04"/>
@@ -115,19 +234,17 @@
         Sign in with Google
       </button>
 
-      <p class="note">We’ll block non-NIT Goa emails for security. If prompted, choose your <b>@nitgoa.ac.in</b> account.</p>
-    </section>
+      <div class="domain-hint">
+        Restricted to <b>@nitgoa.ac.in</b> emails only.
+      </div>
+    </div>
   </main>
 
-  <!-- FOOTER -->
   <footer>
-    <div class="container foot">
-      <small>© 2025 NIT Goa • HostelMitra</small>
-      <small>Powered by Firebase (Auth • Firestore)</small>
-    </div>
+    <small>© 2025 NIT Goa • Powered by Firebase</small>
   </footer>
 
-  <!-- Keep your JS exactly the same -->
   <script type="module" src="main.js"></script>
+
 </body>
 </html>

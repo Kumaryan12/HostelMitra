@@ -4,84 +4,256 @@
   <meta charset="UTF-8" />
   <title>HostelMitra | Submit Complaint</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f172a" />
   <style>
-    :root{ --student:#2C7BE5; --admin:#22B573; --accent:#FACC15; --ink:#0f172a; --muted:#475569;
-           --bg:#F8FAFC; --card:#FFFFFF; --border:#E2E8F0; --radius:14px;
-           --shadow:0 12px 30px rgba(0,0,0,.12); --shadow-sm:0 8px 18px rgba(0,0,0,.10);}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
-    a{color:inherit;text-decoration:none} img{max-width:100%;display:block}
-    .container{width:min(1100px,92%);margin-inline:auto}
-    header{position:sticky;top:0;z-index:40;backdrop-filter:saturate(180%) blur(10px);
-      background:linear-gradient(0deg,rgba(255,255,255,.82),rgba(255,255,255,.95));border-bottom:1px solid var(--border)}
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0}
-    .brand{display:flex;align-items:center;gap:.65rem;font-weight:900;letter-spacing:.35px;color:var(--student)}
-    .brand img{width:36px;height:36px;border-radius:8px;object-fit:contain;background:#fff;border:1px solid var(--border)}
-    .nav-actions{display:flex;gap:.6rem;flex-wrap:wrap}
-    .btn{border:0;border-radius:10px;padding:.65rem 1rem;font-weight:800;cursor:pointer;
-      transition:transform .2s,box-shadow .2s,background .2s;display:inline-flex;align-items:center;gap:.5rem}
-    .btn.primary{background:var(--student);color:#fff;box-shadow:var(--shadow-sm)} .btn.primary:hover{transform:translateY(-2px)}
-    .btn.ghost{background:#fff;border:1px solid var(--border);color:var(--ink)} .btn.ghost:hover{background:#F1F5F9}
-    .hero{background:linear-gradient(135deg, rgba(44,123,229,.10), rgba(34,181,115,.09));border-bottom:1px solid var(--border)}
-    .hero-wrap{padding:30px 0;text-align:center}
-    .crumb{color:#334155;font-weight:800;background:#fff;border:1px solid var(--border);padding:.35rem .7rem;border-radius:999px;display:inline-block}
-    .hero h1{margin:.6rem 0 .35rem;font-size:clamp(1.7rem,3vw,2.1rem);font-weight:900}
-    .hero p{color:var(--muted);margin:0 auto;max-width:760px}
-    main{padding:22px 0 42px}
-    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
-    @media (max-width: 960px){.grid{grid-template-columns:1fr}}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-    .card h2{margin:.2rem 0 .4rem} .hint{color:var(--muted);font-size:.95rem;margin-bottom:.8rem}
-    .row{display:grid;gap:.45rem;margin:.55rem 0} label{font-weight:800;font-size:.92rem}
-    input[type="text"], input[type="email"], select, textarea{width:100%;padding:.8rem .9rem;border:1px solid var(--border);border-radius:10px;font-size:1rem;background:#fff}
-    textarea{resize:vertical;min-height:110px}
-    .radio-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:.25rem}
-    .pill{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .7rem;border-radius:999px;background:#fff;border:1px solid var(--border);cursor:pointer;font-weight:700}
-    .actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem} .btn.wide{min-width:180px;justify-content:center}
-    .list-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:16px;height:100%}
-    .list-card h3{margin:.2rem 0 .35rem}
-    #complaintList{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-    #complaintList li{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px;box-shadow:var(--shadow-sm)}
-    #complaintList li small{color:#64748B}
-    .empty{background:#fff;border:1px dashed var(--border);border-radius:12px;padding:12px;text-align:center;color:#64748B}
-    footer{border-top:1px solid var(--border);background:#F1F5F9;color:#0f172a;padding:16px 0;margin-top:10px}
-    .foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-    .foot small{color:#334155}
-    @media (prefers-reduced-motion: reduce){*{transition:none !important}}
+    /* ---------------------- VARIABLES ---------------------- */
+    :root {
+      --primary: #3B82F6;
+      --primary-hover: #60A5FA;
+      --secondary: #10B981;
+      
+      --text-main: #FFFFFF;
+      --text-muted: #94A3B8;
+      
+      /* Glassmorphism */
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-blur: blur(20px);
+      --radius: 16px;
+      
+      --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+      --bg-image: url('https://hostelmitra-81b7d.web.app/assets/nit-goa-logo.jpg');
+    }
+
+    /* ---------------------- BASE --------------------------- */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: var(--font-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      background: 
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95)),
+        var(--bg-image);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    .container { width: min(1100px, 92%); margin-inline: auto; }
+
+    /* ---------------------- HEADER ------------------------- */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 1rem 0;
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; }
+    
+    .brand {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-weight: 700; font-size: 1.1rem; letter-spacing: 0.5px;
+    }
+    .brand img {
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid var(--glass-border);
+    }
+
+    .nav-actions { display: flex; gap: 0.75rem; align-items: center; }
+
+    /* Buttons */
+    .btn {
+      padding: 0.6rem 1rem; border-radius: 10px; font-weight: 600;
+      font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+      border: 1px solid transparent; display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+    .btn.primary {
+      background: var(--primary); color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+    }
+    .btn.primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+    .btn.ghost {
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--glass-border);
+    }
+    .btn.ghost:hover {
+      background: var(--glass-bg); color: white; border-color: white;
+    }
+
+    /* ---------------------- HERO --------------------------- */
+    .hero {
+      padding: 3rem 0 2rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800; margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #fff, #bae6fd);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p { color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+
+    /* ---------------------- FORM GRID ---------------------- */
+    main { padding-bottom: 4rem; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+    /* Glass Panels */
+    .card, .list-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 2rem;
+    }
+
+    h2, h3 { font-size: 1.25rem; margin-bottom: 0.5rem; font-weight: 700; }
+    .hint { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    /* ---------------------- INPUT STYLES ------------------- */
+    .row { margin-bottom: 1.25rem; }
+    
+    label {
+      display: block; font-size: 0.9rem; font-weight: 600;
+      color: #fff; margin-bottom: 0.5rem;
+    }
+
+    input[type="text"], input[type="email"], select, textarea {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--glass-border);
+      background: rgba(0, 0, 0, 0.2); /* Darker input bg */
+      color: #fff;
+      font-size: 1rem;
+      font-family: var(--font-main);
+      transition: border-color 0.2s;
+    }
+
+    input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--primary);
+      background: rgba(0, 0, 0, 0.3);
+    }
+    
+    select option { background: #1e293b; color: white; } /* Fix dropdown options on dark mode */
+    textarea { min-height: 120px; resize: vertical; }
+
+    /* ---------------------- RADIO PILLS -------------------- */
+    .radio-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    
+    .pill {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      font-size: 0.9rem; font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .pill:hover { background: rgba(255, 255, 255, 0.1); }
+    
+    /* Highlight the selected radio pill */
+    .pill:has(input:checked) {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    input[type="radio"] { accent-color: var(--primary); }
+
+    /* ---------------------- ACTION BUTTONS ----------------- */
+    .actions { margin-top: 2rem; }
+    .btn.wide { width: 100%; justify-content: center; padding: 0.9rem; font-size: 1rem; }
+
+    /* ---------------------- LIST (SIDEBAR) ----------------- */
+    #complaintList {
+      list-style: none; display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    
+    #complaintList li {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem;
+      font-size: 0.95rem;
+    }
+    
+    #complaintList li b { display: block; margin-bottom: 0.25rem; color: #fff; }
+    #complaintList li small { color: var(--text-muted); font-size: 0.85rem; }
+
+    .empty {
+      text-align: center; padding: 1.5rem;
+      border: 1px dashed var(--glass-border);
+      border-radius: 12px; color: var(--text-muted);
+    }
+
+    /* ---------------------- FOOTER ------------------------- */
+    footer {
+      border-top: 1px solid var(--glass-border);
+      padding: 2rem 0; text-align: center;
+      color: var(--text-muted); font-size: 0.85rem;
+    }
+
+    @media (max-width: 640px) {
+      .nav-actions .btn span { display: none; }
+      .hero h1 { font-size: 2rem; }
+    }
   </style>
 </head>
 <body>
+
   <header>
     <div class="container nav">
       <div class="brand">
-        <img src="assets/nit-goa-logo.png" alt="NIT Goa" onerror="this.style.display='none'">
+        <img src="assets/nit-goa-logo.png" alt="Logo" onerror="this.style.display='none'">
         <span>HostelMitra</span>
       </div>
       <div class="nav-actions">
-        <button class="btn ghost" onclick="location.href='common_issues.html'">Common Issues</button>
-        <button class="btn ghost" onclick="location.href='index.html'">Home</button>
-        <button class="btn primary" onclick="logout()">Logout</button>
+        <button class="btn ghost" onclick="location.href='common_issues.html'">
+          <span>Feed</span>
+        </button>
+        <button class="btn ghost" onclick="location.href='index.html'">
+          <span>Home</span>
+        </button>
+        <button class="btn primary" onclick="logout()">
+          <span>Logout</span>
+        </button>
       </div>
     </div>
   </header>
 
   <section class="hero">
-    <div class="container hero-wrap">
-      <span class="crumb">Student Portal</span>
-      <h1>Submit a Complaint</h1>
-      <p>Describe the issue clearly. Choose visibility as <b>Public</b> (everyone sees) or <b>Private</b> (admin only).</p>
+    <div class="container">
+      <h1>Submit Complaint</h1>
+      <p>Report issues to the hostel administration. Choose Public visibility to let others upvote.</p>
     </div>
   </section>
 
   <main class="container">
     <div class="grid">
-      <section class="card" aria-label="Submit complaint form">
-        <h2>Complaint Details</h2>
+      
+      <section class="card">
+        <h2>New Issue Details</h2>
         <div class="hint">Fields marked with * are required.</div>
 
         <div class="row">
           <label for="name">* Name</label>
-          <input id="name" type="text" placeholder="Your name" />
+          <input id="name" type="text" placeholder="Your Full Name" />
         </div>
 
         <div class="row">
@@ -91,7 +263,7 @@
 
         <div class="row">
           <label for="room">* Room No</label>
-          <input id="room" type="text" placeholder="e.g., A-214" />
+          <input id="room" type="text" placeholder="e.g. B-304" />
         </div>
 
         <div class="row">
@@ -100,52 +272,53 @@
             <option>Electrical</option>
             <option>Plumbing</option>
             <option>Cleaning</option>
+            <option>Furniture</option>
             <option>Other</option>
           </select>
         </div>
 
         <div class="row">
           <label for="description">* Description</label>
-          <textarea id="description" placeholder="Describe your issue"></textarea>
+          <textarea id="description" placeholder="Please describe the issue in detail..."></textarea>
         </div>
 
         <div class="row">
           <label>Visibility</label>
-          <div class="radio-row" role="group" aria-label="Visibility">
+          <div class="radio-row">
             <label class="pill" for="public">
               <input type="radio" name="visibility" id="public" value="public" checked />
-              Public (View All)
+              Public (Visible to all)
             </label>
             <label class="pill" for="private">
               <input type="radio" name="visibility" id="private" value="private" />
-              Private (Admin Only)
+              Private (Admin only)
             </label>
           </div>
         </div>
-        <div class="row">
-  
-
 
         <div class="actions">
           <button class="btn primary wide" onclick="submitComplaint()">Submit Complaint</button>
         </div>
       </section>
 
-      <aside class="list-card" aria-label="Your complaints">
-        <h3>Your Complaints</h3>
-        <p class="hint">This shows the complaints submitted from your account (realtime).</p>
-        <ul id="complaintList"></ul>
+      <aside class="list-card">
+        <h3>Recent Activity</h3>
+        <p class="hint">Complaints submitted by you appear here instantly.</p>
+        <ul id="complaintList">
+          <li class="empty">Loading your recent complaints...</li>
+        </ul>
       </aside>
+
     </div>
   </main>
 
   <footer>
-    <div class="container foot">
-      <small>© 2025 NIT Goa • HostelMitra</small>
-      <small>Powered by Firebase (Auth • Firestore)</small>
+    <div class="container">
+      © 2025 NIT Goa • HostelMitra
     </div>
   </footer>
 
   <script type="module" src="main.js"></script>
+
 </body>
 </html>
