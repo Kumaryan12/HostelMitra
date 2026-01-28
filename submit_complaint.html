@@ -141,6 +141,26 @@
       transition: border-color 0.2s;
     }
 
+    /* 1. Fix for Read-only or Disabled inputs (like the pre-filled Email) */
+input:disabled, input[readonly] {
+  background: rgba(0, 0, 0, 0.2) !important; /* Force transparent dark bg */
+  color: rgba(255, 255, 255, 0.8) !important; /* Visible white text */
+  border-color: rgba(255, 255, 255, 0.1);
+  cursor: not-allowed; /* Shows it can't be changed */
+  opacity: 1; /* Override some browser defaults that fade it out */
+}
+
+/* 2. Fix for Browser Autofill (Chrome/Edge/Safari) turning inputs white */
+/* This "masks" the white autofill background with a dark inner shadow */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #1e293b inset !important; /* Matches dark theme */
+  -webkit-text-fill-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
     input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.3); }
 
     input:focus, select:focus, textarea:focus {
@@ -227,8 +247,7 @@
         <button class="btn ghost" onclick="location.href='common_issues.html'">
           <span>Feed</span>
         </button>
-        <button class="btn ghost" onclick="location.href='index.html'">
-          <span>Home</span>
+        
         </button>
         <button class="btn primary" onclick="logout()">
           <span>Logout</span>

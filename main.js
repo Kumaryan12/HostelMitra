@@ -313,13 +313,22 @@ window.submitComplaint = async function () {
 
 
         node.innerHTML = `
-          <b>${escapeHtml(c.category)}</b> — ${escapeHtml(c.description)}<br>
-          <small>Status: ${escapeHtml(c.status)} • Votes: ${c.votes ?? 0} • Room: ${escapeHtml(c.room)}</small>
-          <div style="margin-top:6px">
-            <button onclick="vote('${docSnap.id}')"> ${c.votes ?? 0}</button>
-          </div>
-        `;
-        container.appendChild(node);
+  <b>${escapeHtml(c.category)}</b> — ${escapeHtml(c.description)}<br>
+  <small>Status: ${escapeHtml(c.status)} • Room: ${escapeHtml(c.room)}</small>
+
+  <div class="vote-action-area">
+    <div class="vote-row">
+      <div class="vote-circle">${c.votes ?? 0}</div>
+
+      <button class="vote-btn" onclick="vote('${docSnap.id}')">
+         Vote
+      </button>
+    </div>
+    
+    <span class="vote-warning">⚠ Note: Once you vote, you cannot unvote.</span>
+  </div>
+`;
+container.appendChild(node);
       });
     },
     (err) => {

@@ -173,6 +173,74 @@
       border: 1px dashed var(--glass-border); border-radius: var(--radius);
       color: var(--text-muted);
     }
+    /* Container for the vote area */
+.vote-action-area {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.vote-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+/* The circular vote count (Green Circle) */
+.vote-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34D399;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* The new Vote Button */
+.vote-btn {
+  background: var(--primary); /* Uses your blue variable */
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.vote-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.vote-btn:disabled {
+  background: var(--glass-bg);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  border: 1px solid var(--glass-border);
+}
+
+/* The warning message */
+.vote-warning {
+  display: block;
+  font-size: 0.75rem;
+  color: #fbbf24; /* Amber color for warning */
+  font-style: italic;
+  opacity: 0.9;
+}
 
     /* ---------------------- FOOTER ------------------------- */
     footer {
