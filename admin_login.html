@@ -9,8 +9,7 @@
     /* ---------------------- VARIABLES ---------------------- */
     :root {
       --primary: #3B82F6;
-      --primary-hover: #60A5FA;
-      --secondary: #10B981;
+      --secondary: #10B981; /* Admin Green */
       
       --text-main: #FFFFFF;
       --text-muted: #94A3B8;
@@ -70,12 +69,6 @@
       font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
       border: 1px solid transparent; display: inline-flex; align-items: center; gap: 0.5rem;
     }
-    .btn.primary {
-      background: var(--primary); color: white;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
-    }
-    .btn.primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
-
     .btn.ghost {
       background: transparent; color: var(--text-muted);
       border: 1px solid var(--glass-border);
@@ -122,43 +115,27 @@
     h2, h3 { font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: 700; }
     .hint { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; }
 
-    /* ---------------------- FORM STYLES -------------------- */
-    .row { margin-bottom: 1.5rem; }
-    
-    label {
-      display: block; font-size: 0.9rem; font-weight: 600;
-      color: #fff; margin-bottom: 0.5rem;
-    }
-
-    input {
+    /* ---------------------- GOOGLE BUTTON ------------------ */
+    .google-btn {
       width: 100%;
-      padding: 0.85rem 1rem;
-      border-radius: 10px;
-      border: 1px solid var(--glass-border);
-      background: rgba(0, 0, 0, 0.2); /* Dark input background */
-      color: #fff;
-      font-size: 1rem;
-      transition: border-color 0.2s;
+      display: flex; justify-content: center; align-items: center; gap: 12px;
+      background: #FFFFFF; color: #1e293b;
+      border: none; border-radius: 12px;
+      padding: 1rem;
+      font-weight: 600; font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+      margin-top: 1rem;
     }
+    .google-btn:hover { background: #F1F5F9; transform: translateY(-2px); }
+    .google-btn:active { transform: scale(0.98); }
+    .google-icon { width: 22px; height: 22px; }
 
-    input:focus {
-      outline: none; border-color: var(--secondary); /* Green focus for admin */
-      background: rgba(0, 0, 0, 0.3);
+    .domain-hint {
+      margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted);
+      padding: 0.75rem; background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px; border: 1px dashed var(--glass-border); text-align: center;
     }
-    
-    /* Password Toggle */
-    .pw-wrap { position: relative; }
-    .toggle {
-      position: absolute; right: 10px; top: 38px;
-      background: rgba(255,255,255,0.1);
-      border: none; color: var(--text-muted);
-      font-size: 0.8rem; padding: 0.3rem 0.6rem;
-      border-radius: 6px; cursor: pointer;
-    }
-    .toggle:hover { color: #fff; background: rgba(255,255,255,0.2); }
-
-    .actions { margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
-    .btn.wide { flex: 1; justify-content: center; }
 
     /* ---------------------- SIDE PANEL --------------------- */
     .panel { text-align: center; display: flex; flex-direction: column; justify-content: center; }
@@ -211,30 +188,24 @@
       
       <section class="card">
         <h2>Welcome Back</h2>
-        <div class="hint">Please enter your credentials to continue.</div>
+        <div class="hint">Sign in with your authorized admin Google account.</div>
 
-        <form onsubmit="loginAdmin(); return false;">
-          <div class="row">
-            <label for="email">Admin Email</label>
-            <input id="email" type="email" placeholder="warden@nitgoa.ac.in" autocomplete="username" />
-          </div>
+        <button class="google-btn" onclick="loginAdmin()">
+          <svg class="google-icon" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg">
+            <path d="M533.5 278.4c0-18.4-1.7-36.1-5-53.3H272v100.9h146.9c-6.3 34-25 62.7-53.2 82v67h85.9c50.3-46.3 81.9-114.5 81.9-196.6z" fill="#4285f4"/>
+            <path d="M272 544.3c72.9 0 134.1-24.1 178.8-65.3l-85.9-67c-23.9 16-54.5 25.4-92.9 25.4-71.3 0-131.8-48.2-153.5-112.8h-89.8v70.9c44.6 88.2 136.4 148.8 243.3 148.8z" fill="#34a853"/>
+            <path d="M118.5 324.6c-10.1-30-10.1-62.3 0-92.3v-70.9h-89.8C2.1 204.3 0 241.6 0 272.2s2.1 67.9 28.7 111.7l89.8-59.3z" fill="#fbbc04"/>
+            <path d="M272 107.7c39.6-.6 77.8 14 106.9 40.7l80.2-80.2C404.7 24.3 343.9 0 272 0 165.1 0 73.3 60.6 28.7 148.8l89.8 70.9C140.2 155.1 200.7 107.7 272 107.7z" fill="#ea4335"/>
+          </svg>
+          Sign in with Google
+        </button>
 
-          <div class="row pw-wrap">
-            <label for="password">Password</label>
-            <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
-            <button type="button" class="toggle" onclick="const p=document.getElementById('password'); p.type = p.type==='password'?'text':'password'; this.textContent = p.type==='password'?'Show':'Hide';">Show</button>
-          </div>
-
-          <div class="actions">
-            <button type="submit" class="btn primary wide" style="background: var(--secondary);" onclick="loginAdmin()">Login</button>
-          </div>
-        </form>
+        
       </section>
 
       <aside class="panel">
         <h3>Streamlined Management</h3>
         <p>Monitor complaints, update statuses, and maintain transparency with the student body in real-time.</p>
-        <img class="hostel-photo" src="assets/hostel.jpg" alt="Hostel" onerror="this.style.display='none'">
       </aside>
 
     </div>

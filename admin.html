@@ -198,9 +198,36 @@
     .chip-public { background: rgba(59, 130, 246, 0.1); color: #93C5FD; }
     .chip-private { background: rgba(139, 92, 246, 0.1); color: #C4B5FD; }
 
-    /* Vote Count */
-    .vote { font-weight: 700; color: var(--text-muted); }
-    .vote-high { color: #34D399; text-shadow: 0 0 10px rgba(52, 211, 153, 0.4); }
+    /* Base style for the vote circle in the table */
+/* Replace your existing .vote class with this */
+.vote {
+    /* 1. Make it a Circle */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    
+    /* 2. Dark Glass Background (Fixes the contrast) */
+    background: rgba(0, 0, 0, 0.4); 
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px); /* Optional: extra fancy blur */
+    
+    /* 3. Text Styling */
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Optional: Keep the green glow for high votes */
+.vote-high {
+    background: rgba(16, 185, 129, 0.25);
+    border-color: #34D399;
+    color: #34D399;
+    text-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+}
 
     /* Action Buttons in Table */
     table button {

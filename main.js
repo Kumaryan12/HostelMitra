@@ -12,6 +12,11 @@ import {
   increment
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+// Ensure these imports are at the VERY TOP of your main.js file
+// --- 1. Add Imports at the top of main.js ---
+import {  
+  signOut 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 
 const publicIssuesList = document.getElementById("publicIssues");
@@ -171,24 +176,42 @@ window.login = async function () {
     alert(e.message);
   }
 };
-window.loginAdmin = async function () {
-  const email = document.getElementById("email").value.trim().toLowerCase();
-  const password = document.getElementById("password").value;
 
-  const ADMIN_EMAIL = "emallikarjuna@nitgoa.ac.in";  // change to your real admin email
+// ... existing code ...
+
+// --- 2. Replace the loginAdmin function ---
+window.loginAdmin = async function () {
+  console.log("🔒 Starting Admin Google Login...");
+  const provider = new GoogleAuthProvider();
 
   try {
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-    const user = cred.user;
+    // 1. Google Popup Login
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    console.log(" Google Auth success:", user.email);
 
-    if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+    // 2. SECURITY CHECK: Verify user exists in 'admins' Firestore collection
+    const adminDocRef = doc(db, "admins", user.email);
+    const adminSnap = await getDoc(adminDocRef);
+
+    if (adminSnap.exists()) {
+      //  SUCCESS: User is an authorized admin
+      console.log(" Admin verification passed!");
       window.location.href = "admin.html";
     } else {
-      alert("Access denied: Not an admin account");
-      await auth.signOut();
+      //  FAILED: User logged in with Google, but IS NOT in the admins list
+      console.warn(" Access Denied: User not in admins list.");
+      await signOut(auth); // Kick them out immediately
+      alert("Access Denied: Your email is not authorized as an Administrator.");
     }
-  } catch (err) {
-    alert("Login failed: " + err.message);
+
+  } catch (error) {
+    console.error(" Login failed:", error);
+    if (error.code === 'auth/popup-closed-by-user') {
+      console.log("User closed the popup");
+    } else {
+      alert("Login Error: " + error.message);
+    }
   }
 };
 
@@ -353,12 +376,6 @@ container.appendChild(node);
   const filterSort       = document.getElementById("filterSort");
   if (!complaintsBody) return; // not on admin.html
 
-  // Small helper so we never crash if not defined elsewhere
-  function votePill(v) {
-    const n = Number.isFinite(v) ? v : 0;
-    return `<span class="chip" style="background:#F1F5F9;border:1px solid #E2E8F0;padding:.25rem .55rem;border-radius:999px;font-weight:700"> ${n}</span>`;
-  }
-
   console.log("✅ Admin dashboard initialized with visibility + status filters + sort");
   let unsubscribe = null;
 
@@ -393,7 +410,7 @@ container.appendChild(node);
 
         let rows = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
-        // Client-side sort (no composite index required)
+        // Client-side sort
         if (sort === "vdesc") {
           rows.sort((a,b) => (b.votes||0) - (a.votes||0) || getMillis(b.timestamp) - getMillis(a.timestamp));
         } else if (sort === "vasc") {
@@ -407,6 +424,11 @@ container.appendChild(node);
         for (const c of rows) {
           const isResolved = c.status === "Resolved";
           const noteId     = `note-${c.id}`;
+
+          // --- VOTE BADGE LOGIC ---
+          const voteCount = c.votes || 0;
+          let voteClass = "vote"; // This matches your new CSS
+          if (voteCount > 5) { voteClass += " vote-high"; } // Green glow for high votes
 
           const noteCell = isResolved
             ? (c.adminNote
@@ -426,7 +448,11 @@ container.appendChild(node);
             <td>${escapeHtml(c.room)}</td>
             <td>${escapeHtml(c.category)}</td>
             <td>${escapeHtml(c.description)} ${visibilityChip(c.visibility)}</td>
-            <td>${votePill(c.votes)}</td>     <!-- Votes column -->
+            
+            <td style="text-align:center;">
+                <span class="${voteClass}">${voteCount}</span>
+            </td>
+            
             <td>${statusBadge(c.status)}</td>
             <td>${noteCell}</td>
             <td style="white-space:nowrap;">${actionCell}</td>
@@ -447,7 +473,6 @@ container.appendChild(node);
   if (filterStatus)     filterStatus.addEventListener("change", loadComplaints);
   if (filterSort)       filterSort.addEventListener("change", loadComplaints);
 })();
-
 
 // ---------- Save note + resolve ----------
 /* Make sure you have serverTimestamp imported:
@@ -595,64 +620,7 @@ function visibilityChip(v){
 }
 
 
-// ---------- Resolved page: PUBLIC resolved (rules-aligned) ----------
-const publicResolvedEl = document.getElementById("publicResolved");
-if (publicResolvedEl) {
-  publicResolvedEl.innerHTML = "<li class='empty'>Loading…</li>";
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      publicResolvedEl.innerHTML = "<li class='empty'>Please sign in to view resolved items.</li>";
-      // Optionally force login:
-      // location.href = "student_login.html";
-      return;
-    }
-
-    const qResolvedPublic = query(
-      collection(db, "complaints"),
-      where("status", "==", "Resolved"),
-      where("visibility", "==", "public") // <- enforce rule in the query
-    );
-
-    onSnapshot(qResolvedPublic, (snap) => {
-      // sort client-side (avoids composite index)
-      const items = snap.docs
-        .map(d => d.data())
-        .sort((a, b) => {
-          const ta = a.timestamp?.toMillis ? a.timestamp.toMillis()
-                   : a.timestamp ? new Date(a.timestamp).getTime() : 0;
-          const tb = b.timestamp?.toMillis ? b.timestamp.toMillis()
-                   : b.timestamp ? new Date(b.timestamp).getTime() : 0;
-          return tb - ta;
-        });
-
-      if (!items.length) {
-        publicResolvedEl.innerHTML = "<li class='empty'>No resolved items yet.</li>";
-        return;
-      }
-
-      publicResolvedEl.innerHTML = "";
-      for (const c of items) {
-        const ts = c.timestamp?.toDate ? c.timestamp.toDate()
-                 : c.timestamp ? new Date(c.timestamp) : null;
-        const when = ts ? ts.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "";
-
-        const li = document.createElement("li");
-        li.className = "item";
-        li.innerHTML = `
-          <b>${c.category}</b> — ${c.description}<br>
-          <small>Room ${c.room} • Resolved ${when ? "• " + when : ""}</small>
-        `;
-        publicResolvedEl.appendChild(li);
-      }
-    }, (err) => {
-      console.error("publicResolved error:", err);
-      publicResolvedEl.innerHTML = "<li class='empty'>Couldn't load resolved items.</li>";
-    });
-  });
-}
-
-// ---------- Resolved lists (public + mine) ----------
+// ---------- Helper Functions (Define these first) ----------
 function formatTime(t) {
   try {
     const d = t?.toDate ? t.toDate() : (typeof t === "string" ? new Date(t) : null);
@@ -663,39 +631,97 @@ function formatTime(t) {
 function renderResolvedItem(c) {
   const li = document.createElement("li");
   li.className = "item";
+  
+  // This logic checks for the admin note and adds the green box if it exists
+  const noteHtml = c.adminNote 
+    ? `<div class="note">📝 <b>Note:</b> ${escapeHtml(c.adminNote)}</div>` 
+    : '';
+
   li.innerHTML = `
     <div><b>${escapeHtml(c.category)}</b> — ${escapeHtml(c.description)}</div>
     <div class="meta">
       Room ${escapeHtml(c.room)} • Resolved • ${formatTime(c.resolvedAt || c.timestamp)}
-      ${c.visibility ? ` • Visibility: ${escapeHtml(c.visibility)}` : ""}
     </div>
-    ${c.adminNote ? `<div class="note">📝 ${escapeHtml(c.adminNote)}</div>` : ""}
+    ${noteHtml}
   `;
   return li;
 }
 
+// ---------- 1. Public Resolved List ----------
+const publicResolvedEl = document.getElementById("publicResolved");
 
+if (publicResolvedEl) {
+  publicResolvedEl.innerHTML = "<li class='empty'>Loading…</li>";
 
+  onAuthStateChanged(auth, (user) => {
+    // Note: Public list is visible even if not logged in usually, 
+    // but if you want to enforce login, keep this check.
+    if (!user) {
+      publicResolvedEl.innerHTML = "<li class='empty'>Please sign in to view resolved items.</li>";
+      return;
+    }
 
+    const qResolvedPublic = query(
+      collection(db, "complaints"),
+      where("status", "==", "Resolved"),
+      where("visibility", "==", "public")
+    );
+
+    onSnapshot(qResolvedPublic, (snap) => {
+      // Sort client-side
+      const items = snap.docs
+        .map(d => d.data())
+        .sort((a, b) => {
+          const ta = a.timestamp?.toMillis ? a.timestamp.toMillis() : (a.timestamp ? new Date(a.timestamp).getTime() : 0);
+          const tb = b.timestamp?.toMillis ? b.timestamp.toMillis() : (b.timestamp ? new Date(b.timestamp).getTime() : 0);
+          return tb - ta;
+        });
+
+      if (!items.length) {
+        publicResolvedEl.innerHTML = "<li class='empty'>No public resolved items yet.</li>";
+        return;
+      }
+
+      publicResolvedEl.innerHTML = "";
+      
+      // FIX IS HERE: We iterate and call the helper function!
+      for (const c of items) {
+        // Use the helper that knows how to render the Note
+        const li = renderResolvedItem(c);
+        publicResolvedEl.appendChild(li);
+      }
+      
+    }, (err) => {
+      console.error("publicResolved error:", err);
+      publicResolvedEl.innerHTML = "<li class='empty'>Couldn't load resolved items.</li>";
+    });
+  });
+}
+
+// ---------- 2. My Resolved List ----------
 const myResolvedEl = document.getElementById("myResolved");
+
 if (myResolvedEl) {
   onAuthStateChanged(auth, (user) => {
     if (!user) {
       myResolvedEl.innerHTML = `<li class="empty">Please sign in to see your resolved items.</li>`;
       return;
     }
+    
     const q = query(
       collection(db, "complaints"),
       where("uid", "==", user.uid),
       where("status", "==", "Resolved"),
       orderBy("timestamp", "desc")
     );
+    
     onSnapshot(q, (snap) => {
       myResolvedEl.innerHTML = "";
       if (snap.empty) {
         myResolvedEl.innerHTML = `<li class="empty">No resolved complaints yet.</li>`;
         return;
       }
+      // This part was already correct, using the helper
       snap.forEach(docSnap => myResolvedEl.appendChild(renderResolvedItem(docSnap.data())));
     }, (e) => console.error("myResolved error:", e));
   });
