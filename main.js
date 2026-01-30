@@ -221,15 +221,21 @@ window.loginAdmin = async function () {
 
 // ---------------- Complaint submission ----------------
 window.submitComplaint = async function () {
+  // 1. GET ALL INPUT VALUES
   const name = document.getElementById("name").value.trim();
   const room = document.getElementById("room").value.trim();
   const category = document.getElementById("category").value;
   const description = document.getElementById("description").value.trim();
   const visibility = document.querySelector('input[name="visibility"]:checked').value;
   const contactEmail = (document.getElementById("emailAddress")?.value || "").trim();
+  
+  // 2. GET THE NEW HOSTEL VALUE
+  const hostelSelect = document.getElementById("hostelSelect");
+  const hostel = hostelSelect ? hostelSelect.value : "";
 
-  if (!name || !room || !description) {
-    alert("Please fill all required fields (*)");
+  // 3. VALIDATION: Check if Hostel is selected along with other fields
+  if (!name || !room || !description || !hostel) {
+    alert("Please fill all required fields, including Hostel Block (*)");
     return;
   }
 
@@ -241,24 +247,32 @@ window.submitComplaint = async function () {
   }
 
   try {
+    // 4. SAVE TO FIRESTORE
     await addDoc(collection(db, "complaints"), {
-      uid: user.uid,                    // 👈 important: tie to user
+      uid: user.uid,
       userEmail: user.email,
-      contactEmail: user.email,     
+      contactEmail: contactEmail || user.email,
 
       name,
+      hostel, // <--- SAVING THE HOSTEL HERE
       room,
       category,
       description,
       visibility,
+      
       status: "Pending",
       votes: 0,
       voters: [],
-      timestamp: new Date().toISOString() // keep as string; no index hassles
+      timestamp: new Date().toISOString()
     });
 
-    alert("Complaint submitted!");
+    alert("Complaint submitted successfully!");
+    
+    // Clear the form
     document.getElementById("description").value = "";
+    document.getElementById("room").value = "";
+    if(hostelSelect) hostelSelect.value = ""; // Reset dropdown
+    
   } catch (err) {
     console.error("Submit failed:", err);
     alert("Error: " + err.message);
@@ -374,9 +388,11 @@ container.appendChild(node);
   const filterVisibility = document.getElementById("filterVisibility");
   const filterStatus     = document.getElementById("filterStatus");
   const filterSort       = document.getElementById("filterSort");
+  const filterHostel     = document.getElementById("filterHostel"); // 1. GET HOSTEL FILTER
+
   if (!complaintsBody) return; // not on admin.html
 
-  console.log("✅ Admin dashboard initialized with visibility + status filters + sort");
+  console.log("✅ Admin dashboard initialized with hostel filter");
   let unsubscribe = null;
 
   function getMillis(t) {
@@ -384,10 +400,13 @@ container.appendChild(node);
   }
 
   function loadComplaints() {
-    const vis  = (filterVisibility && filterVisibility.value) || "all";
-    const stat = (filterStatus && filterStatus.value)     || "all";
-    const sort = (filterSort && filterSort.value)         || "new";
+    // 2. GET CURRENT DROPDOWN VALUES
+    const vis        = (filterVisibility && filterVisibility.value) || "all";
+    const stat       = (filterStatus && filterStatus.value)     || "all";
+    const sort       = (filterSort && filterSort.value)         || "new";
+    const hostelType = (filterHostel && filterHostel.value)     || "all"; // Get selected hostel type
 
+    // 3. BUILD QUERY (Only Visibility & Status are queried from DB)
     const filters = [];
     if (vis  !== "all") filters.push(where("visibility", "==", vis));
     if (stat !== "all") filters.push(where("status", "==", stat));
@@ -403,14 +422,36 @@ container.appendChild(node);
         complaintsBody.innerHTML = "";
 
         if (snapshot.empty) {
-          complaintsBody.innerHTML =
-            `<tr><td colspan="8">No complaints found for this filter.</td></tr>`;
+          complaintsBody.innerHTML = `<tr><td colspan="8">No complaints found.</td></tr>`;
           return;
         }
 
+        // 4. CONVERT TO ARRAY
         let rows = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
-        // Client-side sort
+        // 5. CLIENT-SIDE HOSTEL FILTER
+        if (hostelType !== "all") {
+          rows = rows.filter(row => {
+            const h = (row.hostel || "").toLowerCase(); // prevent crash if undefined
+            
+            if (hostelType === "boys") {
+              // Check for known boys hostels
+              return h.includes("talpona"); 
+            } 
+            if (hostelType === "girls") {
+              // Check for known girls hostels
+              return h.includes("terekhol");
+            }
+            return true; // "all" case falls through
+          });
+        }
+
+        if (rows.length === 0) {
+           complaintsBody.innerHTML = `<tr><td colspan="8">No complaints match this hostel filter.</td></tr>`;
+           return;
+        }
+
+        // 6. SORT LOGIC
         if (sort === "vdesc") {
           rows.sort((a,b) => (b.votes||0) - (a.votes||0) || getMillis(b.timestamp) - getMillis(a.timestamp));
         } else if (sort === "vasc") {
@@ -421,14 +462,15 @@ container.appendChild(node);
           rows.sort((a,b) => getMillis(b.timestamp) - getMillis(a.timestamp));
         }
 
+        // 7. RENDER ROWS
         for (const c of rows) {
           const isResolved = c.status === "Resolved";
           const noteId     = `note-${c.id}`;
 
           // --- VOTE BADGE LOGIC ---
           const voteCount = c.votes || 0;
-          let voteClass = "vote"; // This matches your new CSS
-          if (voteCount > 5) { voteClass += " vote-high"; } // Green glow for high votes
+          let voteClass = "vote"; 
+          if (voteCount > 5) { voteClass += " vote-high"; } 
 
           const noteCell = isResolved
             ? (c.adminNote
@@ -442,10 +484,20 @@ container.appendChild(node);
             <button class="btn success" onclick="resolveWithNote('${c.id}')">Resolved</button>
           `;
 
+          // Format Hostel Name (Bold)
+          const hostelDisplay = c.hostel 
+            ? `<div style="font-size:0.8rem; opacity:0.7; margin-bottom:2px">${escapeHtml(c.hostel)}</div>` 
+            : "";
+
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${escapeHtml(c.name)}</td>
-            <td>${escapeHtml(c.room)}</td>
+            
+            <td>
+                ${hostelDisplay}
+                <span style="font-weight:600">${escapeHtml(c.room)}</span>
+            </td>
+
             <td>${escapeHtml(c.category)}</td>
             <td>${escapeHtml(c.description)} ${visibilityChip(c.visibility)}</td>
             
@@ -469,9 +521,12 @@ container.appendChild(node);
   }
 
   loadComplaints();
+  
+  // Attach Event Listeners
   if (filterVisibility) filterVisibility.addEventListener("change", loadComplaints);
   if (filterStatus)     filterStatus.addEventListener("change", loadComplaints);
   if (filterSort)       filterSort.addEventListener("change", loadComplaints);
+  if (filterHostel)     filterHostel.addEventListener("change", loadComplaints); // Listener for new filter
 })();
 
 // ---------- Save note + resolve ----------
