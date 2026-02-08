@@ -68,9 +68,15 @@
     .btn {
       padding: 0.6rem 1rem; border-radius: 10px; font-weight: 600;
       font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
-      border: 1px solid transparent; background: transparent; color: var(--text-muted);
+      border: 1px solid transparent; 
+      display: inline-flex; align-items: center; justify-content: center;
     }
-    .btn:hover { background: var(--glass-bg); color: #fff; border-color: var(--glass-border); }
+    
+    .btn.ghost {
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--glass-border);
+    }
+    .btn.ghost:hover { background: var(--glass-bg); color: #fff; border-color: #fff; }
     
     .btn.primary {
       background: var(--primary); color: #fff; border: none;
@@ -171,11 +177,58 @@
       color: var(--text-muted); font-size: 0.85rem;
     }
 
-    @media (max-width: 640px) {
-      .hero h1 { font-size: 2rem; }
-      .nav-actions .btn { padding: 0.5rem; }
-      .nav-actions .btn span { display: none; } /* Icon only on mobile */
-      .nav-actions .btn::after { content: attr(title); font-size: 1.2rem; } /* primitive icon fallback */
+    /* --- MOBILE HEADER FIX (NUCLEAR OPTION) --- */
+    /* This overrides everything to ensure buttons are VISIBLE on phones */
+    @media (max-width: 768px) {
+      
+      /* 1. Force Header to Stack Vertically */
+      header .nav {
+        flex-direction: column !important;
+        align-items: center !important;
+        padding-bottom: 1rem !important;
+      }
+
+      /* 2. Logo Area */
+      header .brand {
+        margin-bottom: 0.5rem !important;
+        width: 100% !important;
+        justify-content: center !important;
+      }
+
+      /* 3. Button Container: Force a new row */
+      header .nav-actions {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: row !important; /* Keep buttons side-by-side */
+        flex-wrap: wrap !important;     /* Allow wrapping if screen is tiny */
+        justify-content: center !important;
+        gap: 10px !important;
+      }
+
+      /* 4. The Buttons Themselves: Make them BIG and VISIBLE */
+      header .nav-actions .btn {
+        flex: 1 1 auto !important;   /* Grow to fill space */
+        min-width: 110px !important; /* Never shrink smaller than this */
+        padding: 12px !important;    /* Big touch target */
+        font-size: 14px !important;  /* Readable text size */
+        display: flex !important;    /* Ensure flexbox works inside */
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important; /* Don't wrap text like "Submit..." */
+      }
+
+      /* 5. Ensure SPAN text is visible (overriding your old rule) */
+      header .nav-actions .btn span {
+        display: block !important;
+      }
+      header .nav-actions .btn::after {
+        content: "" !important; /* Hide the weird fallback icon if present */
+      }
+
+      /* 6. Push page content down so header doesn't cover it */
+      body {
+        padding-top: 150px !important; /* Adjust if header is huge */
+      }
     }
   </style>
 </head>
@@ -189,13 +242,15 @@
       </div>
       
       <div class="nav-actions">
-        <button class="btn" onclick="location.href='common_issues.html'" title="Feed">
+        <button class="btn ghost" onclick="location.href='index.html'" title="Feed">
           <span>Feed</span>
         </button>
-        <button class="btn" onclick="location.href='submit_complaint.html'" title="New">
-          <span>Submit Complaint</span>
+        
+        <button class="btn primary" onclick="location.href='submit_complaint.html'">
+          <span>New Complaint</span>
         </button>
-        <button class="btn primary" onclick="logout()" title="Logout">
+        
+        <button class="btn ghost" onclick="logout()" title="Logout">
           <span>Logout</span>
         </button>
       </div>

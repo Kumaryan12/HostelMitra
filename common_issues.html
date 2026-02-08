@@ -151,7 +151,7 @@
       color: #64748B; font-size: 0.8rem;
     }
 
-    /* Vote Button Styling (if JS creates a button) */
+    /* Vote Button Styling */
     #publicIssues li button {
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid rgba(16, 185, 129, 0.3);
@@ -173,74 +173,74 @@
       border: 1px dashed var(--glass-border); border-radius: var(--radius);
       color: var(--text-muted);
     }
+    
     /* Container for the vote area */
-.vote-action-area {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--glass-border);
-}
+    .vote-action-area {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--glass-border);
+    }
 
-.vote-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 6px;
-}
+    .vote-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
 
-/* The circular vote count (Green Circle) */
-.vote-circle {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #34D399;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
+    /* The circular vote count (Green Circle) */
+    .vote-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34D399;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
 
-/* The new Vote Button */
-.vote-btn {
-  background: var(--primary); /* Uses your blue variable */
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 99px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
-}
+    /* The new Vote Button */
+    .vote-btn {
+      background: var(--primary); 
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+    }
 
-.vote-btn:hover {
-  background: var(--primary-hover);
-  transform: translateY(-2px);
-}
+    .vote-btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
 
-.vote-btn:disabled {
-  background: var(--glass-bg);
-  color: var(--text-muted);
-  cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
-  border: 1px solid var(--glass-border);
-}
+    .vote-btn:disabled {
+      background: var(--glass-bg);
+      color: var(--text-muted);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+      border: 1px solid var(--glass-border);
+    }
 
-/* The warning message */
-.vote-warning {
-  display: block;
-  font-size: 0.75rem;
-  color: #fbbf24; /* Amber color for warning */
-  font-style: italic;
-  opacity: 0.9;
-}
+    .vote-warning {
+      display: block;
+      font-size: 0.75rem;
+      color: #fbbf24; /* Amber color for warning */
+      font-style: italic;
+      opacity: 0.9;
+    }
 
     /* ---------------------- FOOTER ------------------------- */
     footer {
@@ -254,10 +254,57 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @media (max-width: 640px) {
-      .nav-actions .btn span { display: none; } /* Hide text on mobile buttons */
-      .hero h1 { font-size: 2rem; }
+    /* --- MOBILE HEADER FIX (NUCLEAR OPTION) --- */
+    /* This overrides everything to ensure buttons are VISIBLE on phones */
+    @media (max-width: 768px) {
+      
+      /* 1. Force Header to Stack Vertically */
+      header .nav {
+        flex-direction: column !important;
+        align-items: center !important;
+        padding-bottom: 1rem !important;
+      }
+
+      /* 2. Logo Area */
+      header .brand {
+        margin-bottom: 0.5rem !important;
+        width: 100% !important;
+        justify-content: center !important;
+      }
+
+      /* 3. Button Container: Force a new row */
+      header .nav-actions {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: row !important; /* Keep buttons side-by-side */
+        flex-wrap: wrap !important;     /* Allow wrapping if screen is tiny */
+        justify-content: center !important;
+        gap: 10px !important;
+      }
+
+      /* 4. The Buttons Themselves: Make them BIG and VISIBLE */
+      header .nav-actions .btn {
+        flex: 1 1 auto !important;   /* Grow to fill space */
+        min-width: 110px !important; /* Never shrink smaller than this */
+        padding: 12px !important;    /* Big touch target */
+        font-size: 14px !important;  /* Readable text size */
+        display: flex !important;    /* Ensure flexbox works inside */
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important; /* Don't wrap text like "Submit..." */
+      }
+
+      /* 5. Ensure SPAN text is visible (overriding your old rule) */
+      header .nav-actions .btn span {
+        display: block !important;
+      }
+
+      /* 6. Push page content down so header doesn't cover it */
+      body {
+        padding-top: 150px !important; /* Adjust if header is huge */
+      }
     }
+    
   </style>
 </head>
 <body>
@@ -268,18 +315,19 @@
         <img src="assets/nit-goa-logo.png" alt="Logo" onerror="this.style.display='none'">
         <span>HostelMitra</span>
       </div>
+      <button class="btn ghost" onclick="location.href='resolved.html'">
+          <span>✓ Resolved</span>
+        </button>
       
       <div class="nav-actions">
-        <button class="btn ghost" onclick="location.href='resolved.html'">
-          <span>Resolved Complaints</span>
-        </button>
-        
         <button class="btn primary" onclick="location.href='submit_complaint.html'">
           <span>New Complaint</span>
         </button>
+
+        
         
         <button class="btn ghost" onclick="logout()" title="Logout">
-          <span style="display:block;">Logout</span>
+          <span>Logout</span>
         </button>
       </div>
     </div>
