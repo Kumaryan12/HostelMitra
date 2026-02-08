@@ -310,8 +310,7 @@ window.submitComplaint = async function () {
 
   const ACTIVE_STATES = ["Pending", "In Progress"];
 
-  // Prefer true server-side filtering (requires composite index):
-  // visibility == 'public' AND status IN ['Pending','In Progress'] ORDER BY votes desc, timestamp desc
+  // Query: Public + Active Status, Sorted by Votes then Time
   const q = query(
     collection(db, "complaints"),
     where("visibility", "==", "public"),
@@ -333,39 +332,34 @@ window.submitComplaint = async function () {
       snapshot.forEach((docSnap) => {
         const c = docSnap.data();
 
-        // Extra guard in case a weird doc slips through (trailing spaces etc.)
+        // Extra guard in case a weird doc slips through
         const st = (c.status || "").trim().toLowerCase();
         if (st === "resolved") {
-          console.warn("Resolved slipped through filter:", docSnap.id, c.status);
           return;
         }
 
-        console.log("[public] render", docSnap.id, c.status, c.visibility);
-
-        // Render as card or list item depending on container
+        // Create the card/list item
         const node = document.createElement(container.tagName === "UL" ? "li" : "div");
-        if (container.tagName !== "UL") node.className = "card"; // optional styling
+        if (container.tagName !== "UL") node.className = "card"; 
 
-        
-
-
+        // --- UPDATED HTML SECTION (Room Number Removed) ---
         node.innerHTML = `
-  <b>${escapeHtml(c.category)}</b> — ${escapeHtml(c.description)}<br>
-  <small>Status: ${escapeHtml(c.status)} • Room: ${escapeHtml(c.room)}</small>
+          <b>${escapeHtml(c.category)}</b> — ${escapeHtml(c.description)}<br>
+          <small>Status: ${escapeHtml(c.status)}</small>
 
-  <div class="vote-action-area">
-    <div class="vote-row">
-      <div class="vote-circle">${c.votes ?? 0}</div>
+          <div class="vote-action-area">
+            <div class="vote-row">
+              <div class="vote-circle">${c.votes ?? 0}</div>
 
-      <button class="vote-btn" onclick="vote('${docSnap.id}')">
-         Vote
-      </button>
-    </div>
-    
-    <span class="vote-warning">⚠ Note: Once you vote, you cannot unvote.</span>
-  </div>
-`;
-container.appendChild(node);
+              <button class="vote-btn" onclick="vote('${docSnap.id}')">
+                 Vote
+              </button>
+            </div>
+            
+            <span class="vote-warning">⚠ Note: Once you vote, you cannot unvote.</span>
+          </div>
+        `;
+        container.appendChild(node);
       });
     },
     (err) => {

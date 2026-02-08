@@ -69,6 +69,7 @@
       padding: 0.6rem 1rem; border-radius: 10px; font-weight: 600;
       font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
       border: 1px solid transparent; display: inline-flex; align-items: center; gap: 0.5rem;
+      justify-content: center;
     }
     .btn.primary {
       background: var(--primary); color: white;
@@ -107,6 +108,7 @@
       grid-template-columns: 1.2fr 0.8fr;
       gap: 1.5rem;
     }
+    /* Mobile: Stack grid vertically */
     @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
 
     /* Glass Panels */
@@ -134,53 +136,39 @@
       padding: 0.8rem 1rem;
       border-radius: 10px;
       border: 1px solid var(--glass-border);
-      background: rgba(0, 0, 0, 0.2); /* Darker input bg */
+      background: rgba(0, 0, 0, 0.2); 
       color: #fff;
-      font-size: 1rem;
+      font-size: 16px; /* Prevents iOS zoom */
       font-family: var(--font-main);
       transition: border-color 0.2s;
     }
+    
     select {
-  width: 100%;
-  padding: 0.85rem 1rem;
-  border-radius: 10px;
-  border: 1px solid var(--glass-border);
-  background: rgba(0, 0, 0, 0.2); /* Dark glass background */
-  color: #fff;
-  font-size: 1rem;
-  cursor: pointer;
-  appearance: none; /* Removes default ugly arrow */
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 0.65em auto;
-}
+      appearance: none; 
+      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 0.65em auto;
+      cursor: pointer;
+    }
 
-select:focus {
-  outline: none;
-  border-color: var(--primary);
-  background-color: rgba(0, 0, 0, 0.4);
-}
+    input:disabled, input[readonly] {
+      background: rgba(0, 0, 0, 0.2) !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+      border-color: rgba(255, 255, 255, 0.1);
+      cursor: not-allowed;
+      opacity: 1;
+    }
 
-    /* 1. Fix for Read-only or Disabled inputs (like the pre-filled Email) */
-input:disabled, input[readonly] {
-  background: rgba(0, 0, 0, 0.2) !important; /* Force transparent dark bg */
-  color: rgba(255, 255, 255, 0.8) !important; /* Visible white text */
-  border-color: rgba(255, 255, 255, 0.1);
-  cursor: not-allowed; /* Shows it can't be changed */
-  opacity: 1; /* Override some browser defaults that fade it out */
-}
-
-/* 2. Fix for Browser Autofill (Chrome/Edge/Safari) turning inputs white */
-/* This "masks" the white autofill background with a dark inner shadow */
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #1e293b inset !important; /* Matches dark theme */
-  -webkit-text-fill-color: white !important;
-  transition: background-color 5000s ease-in-out 0s;
-}
+    /* Fix browser autofill background */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px #1e293b inset !important;
+      -webkit-text-fill-color: white !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
 
     input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.3); }
 
@@ -189,7 +177,7 @@ input:-webkit-autofill:active {
       background: rgba(0, 0, 0, 0.3);
     }
     
-    select option { background: #1e293b; color: white; } /* Fix dropdown options on dark mode */
+    select option { background: #1e293b; color: white; }
     textarea { min-height: 120px; resize: vertical; }
 
     /* ---------------------- RADIO PILLS -------------------- */
@@ -208,13 +196,12 @@ input:-webkit-autofill:active {
     
     .pill:hover { background: rgba(255, 255, 255, 0.1); }
     
-    /* Highlight the selected radio pill */
     .pill:has(input:checked) {
       background: rgba(59, 130, 246, 0.2);
       border-color: var(--primary);
       color: #fff;
     }
-
+    
     input[type="radio"] { accent-color: var(--primary); }
 
     /* ---------------------- ACTION BUTTONS ----------------- */
@@ -250,9 +237,59 @@ input:-webkit-autofill:active {
       color: var(--text-muted); font-size: 0.85rem;
     }
 
-    @media (max-width: 640px) {
-      .nav-actions .btn span { display: none; }
-      .hero h1 { font-size: 2rem; }
+    /* --- MOBILE HEADER FIX (NUCLEAR OPTION) --- */
+    /* This overrides everything to ensure buttons are VISIBLE on phones */
+    @media (max-width: 768px) {
+      /* 1. Force Header to Stack Vertically */
+      header .nav {
+        flex-direction: column !important;
+        align-items: center !important;
+        padding-bottom: 1rem !important;
+      }
+
+      /* 2. Logo Area */
+      header .brand {
+        margin-bottom: 0.5rem !important;
+        width: 100% !important;
+        justify-content: center !important;
+      }
+
+      /* 3. Button Container: Force a new row */
+      header .nav-actions {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: row !important; /* Keep buttons side-by-side */
+        flex-wrap: wrap !important;     /* Allow wrapping if screen is tiny */
+        justify-content: center !important;
+        gap: 10px !important;
+      }
+
+      /* 4. The Buttons Themselves: Make them BIG and VISIBLE */
+      header .nav-actions .btn {
+        flex: 1 1 auto !important;   /* Grow to fill space */
+        min-width: 110px !important; /* Never shrink smaller than this */
+        padding: 12px !important;    /* Big touch target */
+        font-size: 14px !important;  /* Readable text size */
+        display: flex !important;    /* Ensure flexbox works inside */
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important; /* Don't wrap text like "Submit..." */
+      }
+
+      /* 5. Ensure SPAN text is visible */
+      header .nav-actions .btn span {
+        display: block !important;
+      }
+
+      /* 6. Push page content down so header doesn't cover it */
+      body {
+        padding-top: 150px !important;
+      }
+
+      /* 7. Reduce card padding on mobile */
+      .card, .list-card {
+        padding: 1.25rem !important;
+      }
     }
   </style>
 </head>
@@ -264,13 +301,17 @@ input:-webkit-autofill:active {
         <img src="assets/nit-goa-logo.png" alt="Logo" onerror="this.style.display='none'">
         <span>HostelMitra</span>
       </div>
+      
       <div class="nav-actions">
-        <button class="btn ghost" onclick="location.href='common_issues.html'">
+        <button class="btn ghost" onclick="location.href='common_issues.html'" title="Feed">
           <span>Feed</span>
         </button>
         
+        <button class="btn ghost" onclick="location.href='resolved.html'" title="Resolved">
+          <span>Resolved</span>
         </button>
-        <button class="btn primary" onclick="logout()">
+
+        <button class="btn primary" onclick="logout()" title="Logout">
           <span>Logout</span>
         </button>
       </div>
@@ -302,13 +343,13 @@ input:-webkit-autofill:active {
         </div>
 
         <div class="row">
-  <label for="hostelSelect">Hostel Block</label>
-  <select id="hostelSelect" required>
-    <option value="" disabled selected>Select your hostel...</option>
-    <option value="Terekhol">Terekhol (Girls)</option>
-    <option value="Talpona">Talpona (Boys)</option>
-  </select>
-</div>
+          <label for="hostelSelect">Hostel Block</label>
+          <select id="hostelSelect" required>
+            <option value="" disabled selected>Select your hostel...</option>
+            <option value="Terekhol">Terekhol (Girls)</option>
+            <option value="Talpona">Talpona (Boys)</option>
+          </select>
+        </div>
 
         <div class="row">
           <label for="room">* Room No</label>
