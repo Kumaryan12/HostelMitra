@@ -130,7 +130,7 @@ if (complaintList) {
         const li = document.createElement("li");
         li.innerHTML = `
           <b>${c.category}</b> — ${c.description}<br>
-          <small>Room ${c.room} • ${c.status} • ${c.timestamp ?? ""}</small>
+          <small>Room ${c.room} • ${c.status} </small>
         `;
         complaintList.appendChild(li);
       }
@@ -223,6 +223,7 @@ window.loginAdmin = async function () {
 window.submitComplaint = async function () {
   // 1. GET ALL INPUT VALUES
   const name = document.getElementById("name").value.trim();
+  const rollno = document.getElementById("rollno").value.trim(); // <-- NEW: Fetch Roll No
   const room = document.getElementById("room").value.trim();
   const category = document.getElementById("category").value;
   const description = document.getElementById("description").value.trim();
@@ -233,9 +234,9 @@ window.submitComplaint = async function () {
   const hostelSelect = document.getElementById("hostelSelect");
   const hostel = hostelSelect ? hostelSelect.value : "";
 
-  // 3. VALIDATION: Check if Hostel is selected along with other fields
-  if (!name || !room || !description || !hostel) {
-    alert("Please fill all required fields, including Hostel Block (*)");
+  // 3. VALIDATION: Check if Roll No is filled along with other fields
+  if (!name || !rollno || !room || !description || !hostel) {
+    alert("Please fill all required fields, including Roll No and Hostel Block (*)");
     return;
   }
 
@@ -254,7 +255,8 @@ window.submitComplaint = async function () {
       contactEmail: contactEmail || user.email,
 
       name,
-      hostel, // <--- SAVING THE HOSTEL HERE
+      rollno,  // <--- NEW: Saving Roll No to the database
+      hostel, 
       room,
       category,
       description,
@@ -271,6 +273,7 @@ window.submitComplaint = async function () {
     // Clear the form
     document.getElementById("description").value = "";
     document.getElementById("room").value = "";
+    document.getElementById("rollno").value = ""; // <-- NEW: Clear Roll No input
     if(hostelSelect) hostelSelect.value = ""; // Reset dropdown
     
   } catch (err) {
@@ -278,7 +281,6 @@ window.submitComplaint = async function () {
     alert("Error: " + err.message);
   }
 };
-
 
 
 
@@ -342,10 +344,16 @@ window.submitComplaint = async function () {
         const node = document.createElement(container.tagName === "UL" ? "li" : "div");
         if (container.tagName !== "UL") node.className = "card"; 
 
-        // --- UPDATED HTML SECTION (Room Number Removed) ---
+        // --- PREPARE HOSTEL DISPLAY ---
+        // If c.hostel exists, show it (e.g., "Talpona"). If not, show "General".
+        // We assume the value in DB is just the name (e.g., "Talpona"), so we add "Hostel" after it.
+        const hostelName = c.hostel ? escapeHtml(c.hostel) : "General";
+
+        // --- UPDATED HTML SECTION ---
+        // Showing: Status • Hostel Name
         node.innerHTML = `
           <b>${escapeHtml(c.category)}</b> — ${escapeHtml(c.description)}<br>
-          <small>Status: ${escapeHtml(c.status)}</small>
+          <small>Status: ${escapeHtml(c.status)} • ${hostelName} Hostel</small>
 
           <div class="vote-action-area">
             <div class="vote-row">
@@ -374,9 +382,6 @@ window.submitComplaint = async function () {
 
 
 
-
-// ---------- Admin complaint view ----------
-// ---------- Admin complaint view (filters + sort + votes column) ----------
 (function () {
   const complaintsBody   = document.getElementById("complaintsBody");
   const filterVisibility = document.getElementById("filterVisibility");
@@ -483,9 +488,22 @@ window.submitComplaint = async function () {
             ? `<div style="font-size:0.8rem; opacity:0.7; margin-bottom:2px">${escapeHtml(c.hostel)}</div>` 
             : "";
 
+          // --- FORMAT THE TIMESTAMP ---
+          let timeString = "Unknown Time";
+          if (c.timestamp) {
+            const dateObj = c.timestamp.toDate ? c.timestamp.toDate() : new Date(c.timestamp);
+            timeString = dateObj.toLocaleString('en-IN', { 
+              day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' 
+            });
+          }
+
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${escapeHtml(c.name)}</td>
+            <td>
+              <b>${escapeHtml(c.name)}</b> 
+              <span style="font-size: 0.8rem; color: #bae6fd;">(${escapeHtml(c.rollno || 'N/A')})</span><br>
+              <small style="color: #94A3B8; font-size: 0.75rem;">${timeString}</small>
+            </td>
             
             <td>
                 ${hostelDisplay}
@@ -514,14 +532,16 @@ window.submitComplaint = async function () {
     );
   }
 
-  loadComplaints();
-  
-  // Attach Event Listeners
+  // Attach event listeners for the filters so the table updates when changed
   if (filterVisibility) filterVisibility.addEventListener("change", loadComplaints);
   if (filterStatus)     filterStatus.addEventListener("change", loadComplaints);
   if (filterSort)       filterSort.addEventListener("change", loadComplaints);
-  if (filterHostel)     filterHostel.addEventListener("change", loadComplaints); // Listener for new filter
+  if (filterHostel)     filterHostel.addEventListener("change", loadComplaints);
+
+  loadComplaints();
 })();
+  
+
 
 // ---------- Save note + resolve ----------
 /* Make sure you have serverTimestamp imported:
