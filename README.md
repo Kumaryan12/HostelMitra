@@ -1,160 +1,277 @@
+<div align="center">
 
 # HostelMitra
 
-**HostelMitra** is a full-stack hostel complaint management portal designed to streamline how students report hostel-related issues and how administrators track, prioritize, and resolve them.
+### A real-time hostel complaint management portal for students and administrators
 
-Instead of relying on scattered WhatsApp messages, informal complaints, or manual follow-ups, HostelMitra provides a centralized digital workflow for complaint submission, real-time tracking, admin resolution, prioritization, and audit visibility.
+<p>
+  <a href="https://hostelmitra-81b7d.web.app/">
+    <img src="https://img.shields.io/badge/Live%20Demo-Open%20App-0e6666?style=for-the-badge&logo=firebase&logoColor=white" alt="Live Demo">
+  </a>
+  <a href="https://github.com/Kumaryan12/HostelMitra">
+    <img src="https://img.shields.io/badge/Repository-View%20Code-111827?style=for-the-badge&logo=github&logoColor=white" alt="Repository">
+  </a>
+</p>
 
----
+<p>
+  <img src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React">
+  <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=111827" alt="Firebase">
+  <img src="https://img.shields.io/badge/Firestore-FFCA28?style=flat-square&logo=firebase&logoColor=111827" alt="Firestore">
+  <img src="https://img.shields.io/badge/Google%20OAuth-4285F4?style=flat-square&logo=google&logoColor=white" alt="Google OAuth">
+  <img src="https://img.shields.io/badge/Real--Time-Enabled-3acebc?style=flat-square&labelColor=0e6666" alt="Real-Time">
+  <img src="https://img.shields.io/badge/Responsive-UI-3acebc?style=flat-square&labelColor=0e6666" alt="Responsive UI">
+</p>
 
-## 🚀 Project Overview
+**Submit · Track · Prioritize · Resolve**
 
-HostelMitra is built to solve a common campus problem: hostel complaints often get lost, delayed, duplicated, or remain unresolved because there is no structured complaint lifecycle.
-
-The platform allows students to raise complaints related to hostel facilities such as rooms, bathrooms, electricity, water, Wi-Fi, mess, cleanliness, furniture, and maintenance. Admins can view all complaints, update their status, resolve issues, and track complaint history.
-
-The system is designed as a practical campus operations tool with a simple user experience and real-time database-backed tracking.
-
----
-
-## 🎯 Problem Statement
-
-In many college hostels, complaint handling is fragmented and inefficient:
-
-- Students report issues through informal channels.
-- Complaints are difficult to track after submission.
-- Hostel admins may not have a clear priority order.
-- Repeated issues from multiple students are not easily visible.
-- There is limited transparency in whether a complaint is pending, in progress, or resolved.
-- No proper audit trail exists for when a complaint was raised or updated.
-
-HostelMitra addresses these gaps by providing a centralized complaint management portal for students and hostel administrators.
+</div>
 
 ---
 
-## ✅ Key Features
+## Overview
 
-### Student Features
+**HostelMitra** is a full-stack hostel complaint management portal designed to make campus complaint handling more structured, transparent, and accountable.
 
-- Student login using Google Authentication.
-- Raise hostel-related complaints through a simple form.
-- Add complaint title, description, category, and relevant details.
-- Track complaint status in real time.
-- View whether a complaint is pending, in progress, or resolved.
-- Vote or support existing complaints to help prioritize common issues.
+Instead of relying on scattered WhatsApp messages, informal follow-ups, or manual complaint registers, HostelMitra creates a centralized workflow where students can submit and track issues while administrators can review, prioritize, update, and resolve them.
 
-### Admin Features
+> Designed for NIT Goa hostel complaint workflows and deployed as a live campus complaint-management prototype.
 
-- Admin dashboard to view all submitted complaints.
-- Role-based access for administrative users.
-- Update complaint status.
-- Resolve and close complaints.
-- View complaint timestamps and status history.
-- Prioritize complaints based on votes and urgency.
-- Manage complaint triage from a centralized interface.
+<table>
+<tr>
+<td width="50%" valign="top">
 
-### System Features
+### For Students
 
-- Firebase Authentication for secure login.
-- Firestore database for real-time complaint storage.
-- Google OAuth-based access.
-- Role-based controls for students and admins.
-- Real-time status updates.
-- Vote-based complaint prioritization.
-- Timestamp and status audit trail.
-- Responsive web interface.
+- Sign in using Google Authentication
+- Submit hostel-related complaints
+- Add title, description, and category
+- Track complaint status in real time
+- View active and resolved complaints
+- Vote for issues affecting multiple students
+
+</td>
+<td width="50%" valign="top">
+
+### For Administrators
+
+- View complaints from one dashboard
+- Filter and prioritize reported issues
+- Update complaint status
+- Add resolution notes
+- Track timestamps and complaint history
+- Identify recurring operational problems
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 🛠️ Tech Stack
+## The Problem
 
-| Layer | Technology |
+Hostel complaint handling is often fragmented:
+
+- complaints are shared through informal channels
+- students cannot reliably track progress
+- repeated issues are difficult to identify
+- admins lack a clear priority order
+- status updates are not visible to students
+- resolution history and audit trails are missing
+
+HostelMitra replaces this fragmented process with a simple digital lifecycle.
+
+```text
+Report → Review → Prioritize → Resolve → Verify
+```
+
+---
+
+## Core Features
+
+| Area | Features |
 |---|---|
-| Frontend | React / Firebase Hosting |
-| Authentication | Firebase Authentication, Google OAuth |
-| Database | Cloud Firestore |
-| Hosting | Firebase Hosting |
-| State/Data | Firestore real-time listeners |
-| Access Control | Role-based admin/student flow |
+| **Authentication** | Google OAuth through Firebase Authentication |
+| **Complaint submission** | Title, description, category, status, and user metadata |
+| **Real-time tracking** | Firestore listeners update complaint state instantly |
+| **Role-based access** | Separate student and administrator workflows |
+| **Prioritization** | Vote-based visibility for commonly reported issues |
+| **Administration** | Status changes, resolution notes, and complaint closure |
+| **Auditability** | Created and updated timestamps with resolution history |
+| **Interface** | Responsive design for desktop and mobile use |
 
 ---
 
-## 🧠 Why HostelMitra?
+## Complaint Lifecycle
 
-HostelMitra is not just a form submission app. It is designed as a lightweight campus operations system.
-
-The main idea is to move hostel complaints from informal communication to a structured workflow:
-
-```text
-Student Complaint
-    ↓
-Complaint Stored in Firestore
-    ↓
-Admin Dashboard Review
-    ↓
-Prioritization / Status Update
-    ↓
-Resolution
-    ↓
-Student Visibility
+```mermaid
+flowchart LR
+    A[Student submits complaint] --> B[Complaint stored in Firestore]
+    B --> C[Pending]
+    C --> D[Admin review]
+    D --> E[In Progress]
+    E --> F[Resolution added]
+    F --> G[Resolved]
+    G --> H[Visible to student]
 ```
 
-This improves accountability, reduces confusion, and helps administrators identify recurring hostel problems.
-
----
-
-## 🏗️ System Architecture
-
-```text
-User Interface
-    ↓
-Firebase Authentication
-    ↓
-Role Check
-    ↓
-Student Dashboard / Admin Dashboard
-    ↓
-Cloud Firestore
-    ↓
-Real-time Complaint Updates
-    ↓
-Status Tracking and Resolution
-```
-
-### Main Components
-
-1. **Authentication Layer**
-   - Handles Google sign-in.
-   - Identifies logged-in users.
-   - Supports domain-restricted or role-based access if configured.
-
-2. **Student Complaint Layer**
-   - Allows students to submit complaints.
-   - Stores complaint title, description, category, user details, status, votes, and timestamps.
-
-3. **Admin Management Layer**
-   - Displays complaints to admins.
-   - Allows status updates and resolution.
-   - Helps admins prioritize complaints.
-
-4. **Database Layer**
-   - Uses Firestore collections to store complaints and user/admin metadata.
-   - Supports real-time updates.
-
-5. **Hosting Layer**
-   - Deployed using Firebase Hosting for easy public access.
-
----
-
-## 📌 Complaint Lifecycle
-
-Each complaint follows a simple operational lifecycle:
+### Status flow
 
 ```text
 Submitted → Pending → In Progress → Resolved
 ```
 
-Possible fields stored for each complaint:
+---
+
+## System Architecture
+
+```mermaid
+flowchart TD
+    A[Student or Admin] --> B[React Interface]
+    B --> C[Firebase Authentication]
+    C --> D{Role Check}
+
+    D -->|Student| E[Student Dashboard]
+    D -->|Admin| F[Admin Dashboard]
+
+    E --> G[Submit / View / Vote]
+    F --> H[Review / Prioritize / Resolve]
+
+    G --> I[Cloud Firestore]
+    H --> I
+
+    I --> J[Real-Time Listeners]
+    J --> E
+    J --> F
+```
+
+### Main Components
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+#### Authentication Layer
+
+- Handles Google sign-in
+- Identifies the authenticated user
+- Supports student and admin roles
+- Can be extended with college-domain restrictions
+
+#### Student Complaint Layer
+
+- Creates new complaints
+- Stores category, description, status, and timestamps
+- Supports complaint visibility and voting
+
+</td>
+<td width="50%" valign="top">
+
+#### Admin Management Layer
+
+- Displays submitted complaints
+- Updates status and resolution notes
+- Helps prioritize common or urgent issues
+- Tracks unresolved and recurring problems
+
+#### Data Layer
+
+- Stores complaints and users in Firestore
+- Provides real-time updates
+- Supports responsive dashboard behaviour
+
+</td>
+</tr>
+</table>
+
+---
+
+## Technology Stack
+
+<table>
+<tr>
+<td><strong>Frontend</strong></td>
+<td>React, responsive web interface</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>Firebase Authentication, Google OAuth</td>
+</tr>
+<tr>
+<td><strong>Database</strong></td>
+<td>Cloud Firestore</td>
+</tr>
+<tr>
+<td><strong>Real-time data</strong></td>
+<td>Firestore real-time listeners</td>
+</tr>
+<tr>
+<td><strong>Hosting</strong></td>
+<td>Firebase Hosting</td>
+</tr>
+<tr>
+<td><strong>Access control</strong></td>
+<td>Student and administrator role-based flows</td>
+</tr>
+</table>
+
+---
+
+## Dashboards
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### Student Dashboard
+
+Students can:
+
+- submit complaints
+- view their own complaints
+- view active hostel issues
+- vote for important complaints
+- track progress
+- verify whether an issue has been resolved
+
+</td>
+<td width="50%" valign="top">
+
+### Admin Dashboard
+
+Administrators can:
+
+- view all complaints
+- filter by category or status
+- sort by votes, date, or priority
+- move complaints through the lifecycle
+- add resolution notes
+- identify recurring hostel problems
+
+</td>
+</tr>
+</table>
+
+---
+
+## Supported Complaint Categories
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Electrical-0e6666?style=flat-square" alt="Electrical">
+  <img src="https://img.shields.io/badge/Water-0e6666?style=flat-square" alt="Water">
+  <img src="https://img.shields.io/badge/Wi--Fi-0e6666?style=flat-square" alt="Wi-Fi">
+  <img src="https://img.shields.io/badge/Mess-0e6666?style=flat-square" alt="Mess">
+  <img src="https://img.shields.io/badge/Cleanliness-0e6666?style=flat-square" alt="Cleanliness">
+  <img src="https://img.shields.io/badge/Furniture-0e6666?style=flat-square" alt="Furniture">
+  <img src="https://img.shields.io/badge/Plumbing-0e6666?style=flat-square" alt="Plumbing">
+  <img src="https://img.shields.io/badge/Security-0e6666?style=flat-square" alt="Security">
+  <img src="https://img.shields.io/badge/Maintenance-0e6666?style=flat-square" alt="Maintenance">
+</p>
+
+---
+
+## Firestore Data Model
+
+### Complaint document
 
 ```js
 {
@@ -167,83 +284,66 @@ Possible fields stored for each complaint:
   createdAt: "timestamp",
   updatedAt: "timestamp",
   votes: 0,
+  priority: "Medium",
   resolvedBy: "admin_email",
   resolutionNote: "Electrician assigned and fan repaired."
 }
 ```
 
----
-
-## 📂 Suggested Folder Structure
-
-Your actual folder structure may differ, but a typical HostelMitra structure can look like this:
+### Collection structure
 
 ```text
-hostelmitra/
-│
-├── public/
-│   └── assets/
-│
-├── src/
-│   ├── components/
-│   │   ├── Navbar.jsx
-│   │   ├── ComplaintCard.jsx
-│   │   ├── ComplaintForm.jsx
-│   │   ├── AdminComplaintTable.jsx
-│   │   └── StatusBadge.jsx
-│   │
-│   ├── pages/
-│   │   ├── Login.jsx
-│   │   ├── StudentDashboard.jsx
-│   │   ├── AdminDashboard.jsx
-│   │   └── Home.jsx
-│   │
-│   ├── firebase/
-│   │   └── config.js
-│   │
-│   ├── services/
-│   │   ├── authService.js
-│   │   └── complaintService.js
-│   │
-│   ├── App.jsx
-│   └── main.jsx
-│
-├── .env
-├── package.json
-└── README.md
+complaints/
+└── complaintId/
+    ├── title
+    ├── description
+    ├── category
+    ├── status
+    ├── createdBy
+    ├── createdAt
+    ├── updatedAt
+    ├── votes
+    ├── priority
+    ├── resolutionNote
+    └── resolvedBy
+
+users/
+└── userId/
+    ├── name
+    ├── email
+    ├── role
+    └── createdAt
 ```
 
 ---
 
-## ⚙️ Installation and Setup
+## Quick Start
 
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/hostelmitra.git
-cd hostelmitra
+git clone https://github.com/Kumaryan12/HostelMitra.git
+cd HostelMitra
 ```
 
-### 2. Install Dependencies
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Create Firebase Project
+### 3. Create a Firebase project
 
-Go to the Firebase Console and create a new project.
-
-Enable the following services:
+Enable:
 
 - Firebase Authentication
 - Google Sign-In Provider
 - Cloud Firestore
-- Firebase Hosting, optional for deployment
+- Firebase Hosting
 
-### 4. Add Firebase Configuration
+### 4. Add environment variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the project root:
 
 ```env
 VITE_FIREBASE_API_KEY=your_api_key
@@ -254,15 +354,15 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
 ```
 
-If your project uses React without Vite, environment variable names may start with `REACT_APP_` instead of `VITE_`.
+> For projects using Create React App instead of Vite, environment variables may use the `REACT_APP_` prefix.
 
-### 5. Run the Project Locally
+### 5. Run locally
 
 ```bash
 npm run dev
 ```
 
-Open the app in your browser:
+Open:
 
 ```text
 http://localhost:5173
@@ -276,19 +376,20 @@ http://localhost:3000
 
 ---
 
-## 🔐 Firebase Authentication
+<details>
+<summary><strong>Firebase Authentication and role setup</strong></summary>
 
 HostelMitra uses Google OAuth through Firebase Authentication.
 
-Recommended setup:
+Recommended configuration:
 
-1. Go to Firebase Console.
-2. Open Authentication.
+1. Open Firebase Console.
+2. Select Authentication.
 3. Enable Google Sign-In.
-4. Add your authorized domain.
-5. Use the logged-in user's email to identify student/admin role.
+4. Add the deployment domain to authorized domains.
+5. Assign student or administrator roles after sign-in.
 
-Example role logic:
+A simple prototype can use an email list:
 
 ```js
 const adminEmails = [
@@ -299,145 +400,56 @@ const adminEmails = [
 const isAdmin = adminEmails.includes(user.email);
 ```
 
-For production, admin roles should be stored securely in Firestore or Firebase custom claims instead of hardcoding emails.
+For production, store roles in Firestore or Firebase custom claims instead of hardcoding administrator emails.
 
----
+</details>
 
-## 🗄️ Firestore Database Design
-
-A basic Firestore structure can be:
-
-```text
-complaints/
-  complaintId/
-    title
-    description
-    category
-    status
-    createdBy
-    createdAt
-    updatedAt
-    votes
-    priority
-    resolutionNote
-    resolvedBy
-
-users/
-  userId/
-    name
-    email
-    role
-    createdAt
-```
-
-### Example Complaint Document
-
-```js
-{
-  title: "Water leakage near bathroom",
-  description: "There is continuous water leakage near the second-floor bathroom.",
-  category: "Water",
-  status: "Pending",
-  createdBy: "student@college.ac.in",
-  votes: 3,
-  priority: "Medium",
-  createdAt: serverTimestamp(),
-  updatedAt: serverTimestamp()
-}
-```
-
----
-
-## 📊 Admin Dashboard
-
-The admin dashboard is designed for hostel authorities or student council representatives who handle hostel complaints.
-
-Admin actions may include:
-
-- View all complaints.
-- Filter complaints by category or status.
-- Sort by votes, date, or priority.
-- Change status to pending, in progress, or resolved.
-- Add resolution notes.
-- Track unresolved complaints.
-- Identify recurring hostel issues.
-
----
-
-## 👨‍🎓 Student Dashboard
-
-The student dashboard allows users to:
-
-- Submit new complaints.
-- View their own complaints.
-- View active hostel complaints.
-- Upvote important complaints.
-- Track complaint progress.
-- Check whether an issue has been resolved.
-
-This creates transparency and reduces the need for repeated follow-ups.
-
----
-
-## 🧪 Example Complaint Categories
-
-HostelMitra can support categories such as:
-
-- Electrical
-- Water
-- Wi-Fi
-- Mess
-- Cleanliness
-- Furniture
-- Plumbing
-- Security
-- Room Maintenance
-- Other
-
----
-
-## 📸 Screenshots
-
-Add screenshots here after deployment.
-
-```markdown
-![Login Page](./screenshots/login.png)
-![Student Dashboard](./screenshots/student-dashboard.png)
-![Admin Dashboard](./screenshots/admin-dashboard.png)
-![Complaint Tracking](./screenshots/complaint-tracking.png)
-```
-
----
-
-## 🌐 Live Demo
-
-Live Demo:
+<details>
+<summary><strong>Suggested project structure</strong></summary>
 
 ```text
-https://hostelmitra-81b7d.web.app/
+hostelmitra/
+├── public/
+│   └── assets/
+├── src/
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── ComplaintCard.jsx
+│   │   ├── ComplaintForm.jsx
+│   │   ├── AdminComplaintTable.jsx
+│   │   └── StatusBadge.jsx
+│   ├── pages/
+│   │   ├── Login.jsx
+│   │   ├── StudentDashboard.jsx
+│   │   ├── AdminDashboard.jsx
+│   │   └── Home.jsx
+│   ├── firebase/
+│   │   └── config.js
+│   ├── services/
+│   │   ├── authService.js
+│   │   └── complaintService.js
+│   ├── App.jsx
+│   └── main.jsx
+├── .env
+├── package.json
+└── README.md
 ```
 
-Repository:
-
-```text
-https://github.com/your-username/hostelmitra
-```
-
-Replace the repository link with your actual GitHub repository URL.
+</details>
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 ### Deploy with Firebase Hosting
 
-Install Firebase CLI:
+Install the Firebase CLI:
 
 ```bash
 npm install -g firebase-tools
 ```
 
-Login:
+Authenticate:
 
 ```bash
 firebase login
@@ -452,10 +464,10 @@ firebase init
 Select:
 
 - Hosting
-- Existing Firebase project
-- Build folder, usually `dist` for Vite or `build` for Create React App
+- the existing Firebase project
+- `dist` for Vite or `build` for Create React App
 
-Build the app:
+Build the application:
 
 ```bash
 npm run build
@@ -469,20 +481,21 @@ firebase deploy
 
 ---
 
-## 🔒 Security Considerations
+## Security Considerations
 
-For production use, the following improvements are recommended:
+A production version should include:
 
-- Store admin roles in Firestore or Firebase custom claims.
-- Add Firestore security rules.
-- Restrict complaint update permissions to admins.
-- Allow students to edit or delete only their own complaints.
-- Validate all complaint inputs.
-- Prevent duplicate votes from the same user.
-- Add domain-based login restriction for college email IDs.
-- Avoid exposing sensitive student data publicly.
+- Firestore security rules
+- role-based update permissions
+- student ownership checks
+- duplicate-vote prevention
+- input validation
+- college-domain login restrictions
+- secure storage of admin roles
+- protection of sensitive student information
 
-Example Firestore rule idea:
+<details>
+<summary><strong>Basic Firestore rule starting point</strong></summary>
 
 ```js
 rules_version = '2';
@@ -498,95 +511,101 @@ service cloud.firestore {
 }
 ```
 
-These rules are only a starting point. A production deployment should define stricter role-based access.
+> These rules are only a starting point. A production deployment should implement stricter role-based and ownership-based access.
+
+</details>
 
 ---
 
-## 📈 Future Improvements
+## Challenges and Learnings
 
-Planned or possible upgrades:
+<table>
+<tr>
+<td width="50%" valign="top">
 
-- Email or WhatsApp notifications for complaint updates.
-- Complaint image upload using Firebase Storage.
-- Admin analytics dashboard.
-- Hostel-wise and floor-wise complaint filtering.
-- SLA-based complaint escalation.
-- Automatic duplicate complaint detection.
-- Monthly complaint reports.
-- Student feedback after resolution.
-- Warden-level and maintenance-team-level dashboards.
-- Push notifications.
-- Mobile app version.
-- AI-based complaint classification and priority detection.
+### Challenges
 
----
+- Designing a simple complaint lifecycle
+- Separating student and admin workflows
+- Maintaining real-time status updates
+- Structuring Firestore for easy querying
+- Making the portal practical for campus use
+- Balancing simplicity with operational detail
 
-## 🧩 Challenges Faced
+</td>
+<td width="50%" valign="top">
 
-Some key challenges in building HostelMitra include:
+### Learnings
 
-- Designing a simple complaint lifecycle.
-- Managing student and admin role separation.
-- Keeping complaint status updates real time.
-- Structuring Firestore data for easy querying.
-- Making the portal practical for real campus usage.
-- Balancing simplicity with useful operational features.
+- Firebase Authentication and Google OAuth
+- Firestore real-time database operations
+- Role-based interface rendering
+- Full-stack workflow design
+- Complaint lifecycle modelling
+- Firebase Hosting deployment
+- Building tools for real campus problems
 
----
-
-## 🧠 Learnings
-
-Through this project, I learned:
-
-- Firebase Authentication and Google OAuth integration.
-- Firestore real-time database operations.
-- Role-based UI rendering.
-- Full-stack workflow design.
-- Complaint lifecycle modelling.
-- Deployment using Firebase Hosting.
-- Building user-facing tools for real campus problems.
+</td>
+</tr>
+</table>
 
 ---
 
-## 🏁 Impact
+## Impact
 
-HostelMitra helps convert hostel complaint handling from an informal and scattered process into a structured digital workflow.
+HostelMitra helps move hostel complaint handling from scattered informal communication to a structured digital workflow.
 
 It improves:
 
-- Complaint visibility
-- Admin accountability
-- Student transparency
-- Issue prioritization
-- Resolution tracking
-- Campus operations efficiency
+- complaint visibility
+- student transparency
+- admin accountability
+- issue prioritization
+- resolution tracking
+- recurring-problem identification
+- campus operations efficiency
 
 ---
 
-## 👨‍💻 Author
+## Roadmap
+
+- Complaint image uploads using Firebase Storage
+- Email or WhatsApp status notifications
+- Push notifications
+- Admin analytics dashboard
+- Hostel-wise and floor-wise filtering
+- SLA-based escalation
+- Duplicate complaint detection
+- Monthly reports
+- Student feedback after resolution
+- Maintenance-team dashboards
+- AI-based category and priority prediction
+- Mobile application
+
+---
+
+## Author
 
 **Aryan Satyendra Kumar**
 
-- Email: kumararyan66472@gmail.com
-- LinkedIn: https://www.linkedin.com/in/kumaryan12
-- GitHub: https://github.com/Kumaryan12
+[![Email](https://img.shields.io/badge/Email-kumararyan66472%40gmail.com-0e6666?style=flat-square&logo=gmail&logoColor=white)](mailto:kumararyan66472@gmail.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-kumaryan12-0e6666?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/kumaryan12)
+[![GitHub](https://img.shields.io/badge/GitHub-Kumaryan12-111827?style=flat-square&logo=github&logoColor=white)](https://github.com/Kumaryan12)
 
 ---
 
-## 📄 License
+## License
 
-This project is open for educational and demonstration purposes.
+This project is currently presented for educational and demonstration purposes.
 
-You may add an MIT License if you want others to reuse or contribute to the project.
+An MIT License can be added if broader reuse and contribution are intended.
 
-```text
-MIT License
-```
-```
-:::
+---
 
-One thing I’ll push you on: don’t write **“used by all NIT Goa students”** in the README unless you can prove it with deployment usage or screenshots. Better wording is:
+<div align="center">
 
-> Designed for NIT Goa hostel complaint workflows and deployed as a live campus complaint management prototype.
+### Turning hostel complaints into a transparent, trackable workflow
 
-That sounds credible and still strong.
+[Live Demo](https://hostelmitra-81b7d.web.app/) · [Repository](https://github.com/Kumaryan12/HostelMitra) · [Back to top](#hostelmitra)
+
+</div>
